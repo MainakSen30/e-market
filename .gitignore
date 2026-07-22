@@ -42,3 +42,14 @@ Thumbs.db
 .nx/workspace-data
 
 test-output
+
+/generated/prisma
+
+# environment
+.env
+
+# AI tooling
+.claude/
+.agents/
+.windsurf/
+skills-lock.json
