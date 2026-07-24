@@ -9,5 +9,27 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
+}
+
+//images
+model images {
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    file_id     String
+    url         String
+    userId      String? @db.ObjectId @unique
+    user        users? @relation(fields: [userId], references: [id])
+}
+
+//users table
+model users {
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    email       String @unique
+    password    String?
+    following   String[]
+    avatar      images?
+    createdAt   DateTime @default(now())
+    updatedAT   DateTime @updatedAt
+    imagesId    String @db.ObjectId
 }
