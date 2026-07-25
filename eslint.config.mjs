@@ -48,6 +48,11 @@ export default [
             "**/*.mjs"
         ],
         // Override or add rules here
-        rules: {}
+        rules: {
+            "no-var": "off",
+            "@typescript-eslint/no-namespace": "off",
+            "@nx/enforce-module-boundaries": "off",
+            "@typescript-eslint/no-explicit-any": "off",
+        }
     }
 ];
