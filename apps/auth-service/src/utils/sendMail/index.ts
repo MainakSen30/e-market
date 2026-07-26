@@ -39,7 +39,9 @@ export const sendEmail = async (to: string, subject: string, templateName: strin
             subject,
             html,
         });
+        return true;
     } catch (error) {
-
+        console.log("Error sending email", error)
+        return false;
     }
 }
