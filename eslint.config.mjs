@@ -53,6 +53,7 @@ export default [
             "@typescript-eslint/no-namespace": "off",
             "@nx/enforce-module-boundaries": "off",
             "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/no-unused-vars": "off"
         }
     }
 ];
