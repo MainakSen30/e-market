@@ -8,7 +8,7 @@ export const userRegistration = async (req: Request, res: Response, next: NextFu
 
     //Validate the data from the body
     validateRegistrationData(req.body, "user")
-    const { name, email } = req.body;
+    const { email } = req.body;
 
     const existingUser = await prisma.users.findUnique({
         where: email
