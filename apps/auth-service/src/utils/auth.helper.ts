@@ -38,7 +38,7 @@ export const checkOtpRestrictions = async (email: string, next: NextFunction) =>
     */
     if (await redis.get(`otp_spam_lock: ${email}`)) {
         return next(
-            new ValidationError("Too many OTP requests! Please try again in an hour.")
+            new ValidationError("Too many OTP requests! Please try again in 1 hour.")
         );
     }
 
@@ -48,7 +48,7 @@ export const checkOtpRestrictions = async (email: string, next: NextFunction) =>
     */
     if (await redis.get(`otp_cooldown: ${email}`)) {
         return next(
-            new ValidationError("Please wait a minute before asking for another OTP.")
+            new ValidationError("Please wait 1 minute before asking for another OTP.")
         )
     }
 }
