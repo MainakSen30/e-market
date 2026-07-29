@@ -7,4 +7,7 @@ const redis = new Redis({
     tls: process.env.REDIS_HOST?.includes("upstash.io") ? {} : undefined,
 });
 
+redis.on("connect", () => console.log("Redis connected successfully"));
+redis.on("error", (err) => console.error("Redis connection error:", err.message));
+
 export default redis;
