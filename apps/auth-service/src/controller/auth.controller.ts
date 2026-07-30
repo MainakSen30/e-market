@@ -43,7 +43,7 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
         const { email, otp, password, name } = req.body;
         //check if every field value is provided
         if( !email || !otp || !password || !name ) {
-            return new ValidationError("All the fields are required")
+            return next(new ValidationError("All the fields are required"))
         }
 
         //check if user is existing
@@ -51,11 +51,11 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
             where: { email }
         });
         if( existingUser ) {
-            return new ValidationError("User already exists with this email. Try a new one!")
+            return next(new ValidationError("User already exists with this email. Try a new one!"))
         }
 
         //add the new user to the db after all the checks are done
-        await verifyOtp(email, otp, next)
+        await verifyOtp(email, otp)
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await prisma.users.create({

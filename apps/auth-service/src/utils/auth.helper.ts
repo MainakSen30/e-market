@@ -89,7 +89,7 @@ export const sendOtp = async (name: string, email: string, template: string) => 
 
 }
 
-export const verifyOtp = async (email: string, otp: string, next: NextFunction) => {
+export const verifyOtp = async (email: string, otp: string) => {
     /*
         In this function, the newly registered user's accout credential such as the email is validated.
         First step is to get the OTP stored in our redis database
@@ -98,9 +98,7 @@ export const verifyOtp = async (email: string, otp: string, next: NextFunction) 
     const storedOtp = await redis.get(`otp: ${email}`);
     //check the stored OTP
     if (!storedOtp) {
-        return next(
-            new ValidationError("Invalid or expired OTP!")
-        );
+        throw new ValidationError("Invalid or expired OTP!")
     }
     //store failed attempts
     const failedAttemptsKey = `otp_attempts: ${email}`
@@ -110,14 +108,10 @@ export const verifyOtp = async (email: string, otp: string, next: NextFunction) 
         if(failedAttempts >= 2) {
             await redis.set(`otp_lock: ${email}`, "locked", "EX", 1800); //lock for 30 mins
             await redis.del(`otp: ${email}`, failedAttemptsKey);
-            return next(
-                new ValidationError("Too many failed attempts, account locked for 30 mins")
-            )
+            throw new ValidationError("Too many failed attempts, account locked for 30 mins")
         }
         await redis.set(failedAttemptsKey, failedAttempts + 1, "EX", 300)
-        return next(
-            new ValidationError(`incorrect OTP! You have ${2 - failedAttempts} attempts remaining.`)
-        );
+        throw new ValidationError(`incorrect OTP! You have ${2 - failedAttempts} attempts remaining.`)
     }
 
     await redis.del(`otp: ${email}`, failedAttemptsKey);
