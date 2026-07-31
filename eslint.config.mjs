@@ -29,6 +29,7 @@ export default [
       "@typescript-eslint/no-unused-vars": "off",
 
       "@nx/enforce-module-boundaries": "off",
+      "@typescript-eslint/no-non-null-assertion": "off"
     },
   },
 ];
