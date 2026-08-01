@@ -160,6 +160,6 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 }
 
 //user forgot password
-export const forgotPassword = async (req: Request, res: Response, next: NextFunction) {
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     await handleForgotPassword(req, res, next, "user")
 }
