@@ -50,3 +50,7 @@ test-output
 .agents/
 .windsurf/
 skills-lock.json
+
+# Next.js
+.next
+out
