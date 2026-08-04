@@ -11,15 +11,15 @@ const Header = () => {
                     <span className='text-2xl font-semibold'>Emarket</span>
                 </Link>
             </div>
-            <div className='w-[50%] flex items-center border-[2.5px] border-[#2c3e6b] rounded-full overflow-hidden h-[55px]'>
+            <div className='w-[50%] flex items-center gap-3'>
                 <input
                     type='text'
-                    placeholder='eg.- smartphone..'
-                    className='flex-1 pl-5 pr-3 font-Poppins font-medium outline-none h-full bg-transparent'
+                    placeholder='Search Here...'
+                    className='flex-1 px-6 font-Poppins font-medium border-[2.5px] border-[#2c3e6b] outline-none h-[55px] rounded-full'
                 />
-                <div className='w-[60px] shrink-0 cursor-pointer flex items-center justify-center bg-[#2c3e6b] h-full'>
+                <button className='w-[55px] h-[55px] shrink-0 cursor-pointer flex items-center justify-center bg-[#2c3e6b] rounded-full'>
                     <Search color='white' size={22} />
-                </div>
+                </button>
             </div>
         </div>
     </div>
