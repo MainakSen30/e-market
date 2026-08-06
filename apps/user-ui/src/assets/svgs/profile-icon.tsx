@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfileIcon = ({ color = '#2c3e6b' }: { color?: string }) => {
+const ProfileIcon = ({ size = 28, color = '#2c3e6b' }: { size?: number; color?: string }) => {
   return (
     <div
       style={{
@@ -11,13 +11,12 @@ const ProfileIcon = ({ color = '#2c3e6b' }: { color?: string }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        cursor: 'pointer',
       }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={26}
-        height={26}
+        width={size}
+        height={size}
         viewBox="0 0 24 24"
         fill="none"
       >
