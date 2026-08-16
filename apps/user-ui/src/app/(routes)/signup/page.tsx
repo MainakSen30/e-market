@@ -1,13 +1,15 @@
 "use client";
+import { useMutation } from '@tanstack/react-query';
 import GoogleButton from 'apps/user-ui/src/shared/components/google-button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react'
 import { useForm } from "react-hook-form";
+import axios , { AxiosError } from "axios";
 
 //formdata
-type Formdata = {
+type SignupFormData = {
     name: string,
     email: string;
     password: string;
@@ -15,12 +17,12 @@ type Formdata = {
 
 const Signup = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [serverError, setServerError] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
     const [showOtp, setShowOtp] = useState(false);
     const [canResend, setCanResend] = useState(false);
     const [timer, setTimer] = useState(60);
     const [otp, setOtp] = useState(["", "", "", ""]);
-    const [userData, setUserData] = useState<FormData | null>(null);
+    const [userData, setUserData] = useState<SignupFormData | null>(null);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const router = useRouter();
@@ -30,11 +32,40 @@ const Signup = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Formdata>();
+    } = useForm<SignupFormData>();
+
+    //timer function
+    const startResendTimer = () => {
+        const interval = setInterval(() => {
+            setTimer((prev) => {
+                if(prev <= 1) {
+                    clearInterval(interval);
+                    setCanResend(true);
+                    return 0;
+                }
+                return prev - 1;
+            })
+        }, 1000);
+    }
+
+    //signup mutation
+    const signupMutation = useMutation({
+        mutationFn: async (data: SignupFormData) => {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/user-registration`, data);
+            return response.data;
+        },
+        onSuccess: (_, formData) => {
+            setUserData(formData);
+            setShowOtp(true);
+            setCanResend(false)
+            setTimer(60);
+            startResendTimer();
+        }
+    })
 
     //form submit function
-    const onSubmit = (data: Formdata) => {
-
+    const onSubmit = (data: SignupFormData) => {
+        signupMutation.mutate(data);
     };
 
     //otp change
