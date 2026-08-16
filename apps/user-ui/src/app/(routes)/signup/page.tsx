@@ -55,6 +55,11 @@ const Signup = () => {
         }
     }
 
+    //resend OTP handler function
+    const resendOtp = () => {
+
+    };
+
   return (
     <div className='w-full py-10 min-h-[85vh] bg-[#f1f1f1]'>
         <h1 className='text-4xl font-Poppins font-semibold text-black text-center'>
@@ -175,6 +180,24 @@ const Signup = () => {
                                 />
                             ))}
                         </div>
+                        {/* Submit button */}
+                        <button className='w-full mt-4 text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-xl'>
+                            Verify
+                        </button>
+
+                        {/* Resend otp */}
+                        <p className='text-center text-sm mt-4'>
+                            {canResend ? (
+                                <button
+                                    onClick={resendOtp}
+                                    className='text-blue-600 cursor-pointer'
+                                >
+                                    Resend OTP
+                                </button>
+                            ) : (
+                                `Resend OTP in ${timer}s`
+                            )}
+                        </p>
                     </div>
                 )}
             </div>
