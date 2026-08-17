@@ -27,7 +27,7 @@ const HeaderBottom = () => {
 
                 {/* "All categories" toggle button — pill-shaped dark button, always left-anchored */}
                 <div
-                    className={`w-[200px] shrink-0 ${isSticky ? '-mb-2' : ''} cursor-pointer flex items-center justify-between px-5 h-[46px] bg-[#2c3e6b] rounded-full`}
+                    className={`w-[260px] shrink-0 ${isSticky ? '-mb-2' : ''} cursor-pointer flex items-center justify-between px-5 h-[46px] bg-[#2c3e6b] rounded-full`}
                     onClick={() => setShow(!show)}
                 >
                     <div className='flex items-center gap-2'>
@@ -44,7 +44,7 @@ const HeaderBottom = () => {
 
                 {/* Categories dropdown panel — appears below the toggle button */}
                 {show && (
-                    <div className={`absolute left-0 ${isSticky ? "top-[68px]" : "top-[50px]"} w-[260px] h-[400px] bg-[#f5f5f5] shadow-md rounded-md z-50`}>
+                    <div className={`absolute left-0 ${isSticky ? "top-[68px]" : "top-[69px]"} w-[260px] h-[400px] bg-[#f5f5f5] shadow-xl rounded-3xl z-50 border border-[#2c3e6b]`}>
                         {/* Category list items will go here */}
                     </div>
                 )}
