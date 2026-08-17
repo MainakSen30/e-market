@@ -17,7 +17,6 @@ type SignupFormData = {
 
 const Signup = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [serverError, setServerError] = useState<string | null>(null);
     const [showOtp, setShowOtp] = useState(false);
     const [canResend, setCanResend] = useState(false);
     const [timer, setTimer] = useState(60);
@@ -60,6 +59,21 @@ const Signup = () => {
             setCanResend(false)
             setTimer(60);
             startResendTimer();
+        }
+    })
+
+    //verify OTP mutation
+    const verifyOtpMutation = useMutation({
+        mutationFn: async () => {
+            if(!userData) return;
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/verify-user`, {
+                ...userData,
+                otp: otp.join("")
+            });
+            return response.data;
+        },
+        onSuccess: () => {
+            router.push("/login");
         }
     })
 
@@ -184,13 +198,11 @@ const Signup = () => {
                         {/* submit button */}
                         <button
                             type='submit'
+                            disabled={signupMutation.isPending}
                             className='w-full text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-full mt-4'
                         >
-                            Sign up
+                            {signupMutation.isPending ? "Signing up..." : "Sign up"}
                         </button>
-                        {serverError && (
-                            <p className='text-red-600 text-sm mt-2'>{serverError}</p>
-                        )}
                     </form>
                 ) : (
                     <div>
@@ -204,7 +216,7 @@ const Signup = () => {
                                         if(param) inputRefs.current[index] = param;
                                     }}
                                     maxLength={1}
-                                    className='size-12 text-center border border-gray-300 outline-none rounded-xl mb-6˝'
+                                    className='size-12 text-center border border-gray-300 outline-none rounded-xl mb-6'
                                     value={digit}
                                     onChange={(e) => handleOtpChange(index, e.target.value)}
                                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
@@ -212,8 +224,12 @@ const Signup = () => {
                             ))}
                         </div>
                         {/* Submit button */}
-                        <button className='w-full mt-4 text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-xl'>
-                            Verify
+                        <button
+                            className='w-full mt-4 text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-xl'
+                            disabled={verifyOtpMutation.isPending}
+                            onClick={() => verifyOtpMutation.mutate()}
+                        >
+                            {verifyOtpMutation.isPending? "Verifying..." : "Verify"}
                         </button>
 
                         {/* Resend otp */}
@@ -229,6 +245,11 @@ const Signup = () => {
                                 `Resend OTP in ${timer}s`
                             )}
                         </p>
+                        {verifyOtpMutation?.isError && verifyOtpMutation.error instanceof AxiosError && (
+                            <p className='text-red-600 text-sm mt-2'>
+                                {verifyOtpMutation.error.response?.data?.message || verifyOtpMutation.error.message}
+                            </p>
+                        )}
                     </div>
                 )}
             </div>
