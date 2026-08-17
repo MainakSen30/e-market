@@ -102,7 +102,7 @@ const Signup = () => {
 
     //resend OTP handler function
     const resendOtp = () => {
-
+        //TODO: resend OTP function
     };
 
   return (

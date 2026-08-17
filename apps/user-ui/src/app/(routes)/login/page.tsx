@@ -1,5 +1,7 @@
 "use client";
+import { useMutation } from '@tanstack/react-query';
 import GoogleButton from 'apps/user-ui/src/shared/components/google-button';
+import axios, { AxiosError } from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -7,14 +9,14 @@ import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
 
 //formdata
-type Formdata = {
+type LoginFormdata = {
     email: string;
     password: string;
 }
 
 const Login = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [serverError, setServerError] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
     const [rememberMe, setRememberMe] = useState(false);
     const router = useRouter();
 
@@ -23,11 +25,31 @@ const Login = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Formdata>();
+    } = useForm<LoginFormdata>();
+
+    //login mutation
+    const loginMutation = useMutation({
+        mutationFn: async (data: LoginFormdata) => {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+                data,
+                { withCredentials: true }
+            );
+            return response.data;
+        },
+        onSuccess: (data) => {
+            setServerError(null);
+            router.push("/");
+        },
+        onError: (error: AxiosError) => {
+            const errorMessage = (error.response?.data as { message?: string })?.message || "Invalid credentials!";
+            setServerError(errorMessage);
+        }
+    })
 
     //form submit function
-    const onSubmit = (data: Formdata) => {
-
+    const onSubmit = (data: LoginFormdata) => {
+        loginMutation.mutate(data);
     };
 
   return (
@@ -124,9 +146,10 @@ const Login = () => {
                     {/* submit button */}
                     <button
                         type='submit'
+                        disabled={loginMutation.isPending}
                         className='w-full text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-full'
                     >
-                        Login
+                        {loginMutation?.isPending ? "Logging in..." : "Login"}
                     </button>
                     {serverError && (
                         <p className='text-red-600 text-sm mt-2'>{serverError}</p>

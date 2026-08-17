@@ -4,8 +4,8 @@ import cors from "cors";
 import morgan from "morgan";
 import {rateLimit, ipKeyGenerator} from "express-rate-limit";
 import proxy from "express-http-proxy";
-import swaggerUi from "swagger-ui-express";
-import axios from 'axios';
+//import swaggerUi from "swagger-ui-express";
+//import axios from 'axios';
 import cookieParser from "cookie-parser";
 
 const app = express();
