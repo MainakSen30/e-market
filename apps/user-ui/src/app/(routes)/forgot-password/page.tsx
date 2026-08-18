@@ -4,8 +4,10 @@ import axios, { AxiosError } from 'axios';
 //import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import React, { useRef, useState } from 'react'
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 
 //formdata
 type ForgotPasswordFormdata = {
@@ -67,9 +69,75 @@ const ForgotPassword = () => {
         }
     })
 
-    //form submit function
-    const onSubmit = (data: ForgotPasswordFormdata) => {
-        console.log(data);
+    //verify OTP mutation
+    const verifyOtpMutation = useMutation({
+        mutationFn: async () => {
+            if(!userEmail) return;
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URI}/api/verify-forgot-password-user`,{
+                    email: userEmail,
+                    otp: otp.join("")
+                });
+            return response.data;
+        },
+        onSuccess: () => {
+            setStep("reset");
+            setServerError(null);
+        },
+        onError: (error: AxiosError) => {
+            const errorMessage = (error.response?.data as { message?: string })?. message || "Invalid Otp, Try again!";
+            setServerError(errorMessage);
+        }
+    });
+
+    //reset password mutation
+    const resetPasswordMutation = useMutation({
+        mutationFn: async ({ password }: { password: string }) => {
+            if(!password) return;
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_URI}/api/reset-password-user`,{
+                    email: userEmail,
+                    newPassword: password
+                });
+            return response.data;
+        },
+        onSuccess: () => {
+            setStep("email");
+            toast.success("Password reset successfully! Please login with your new password");
+            setServerError(null);
+            router.push("/login");
+        },
+        onError: (error: AxiosError) => {
+            const errorMessage = (error.response?.data as { message?: string })?. message || "Invalid Otp, Try again!";
+            setServerError(errorMessage);
+        }
+    })
+
+    //handle otp change function
+    const handleOtpChange = (index: number, value: string) => {
+        if (!/^[0-9]?$/.test(value)) return;
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+
+        if(value && index < inputRefs.current.length -1) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+    const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+        if(e.key === "Backspace" && !otp[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus()
+        }
+    }
+
+    //on submitting email, this function will call request otp mutation
+    const onSubmitEmail = ({ email }: { email: string }) => {
+        requestOtpMutation.mutate({ email });
+    }
+
+    //same for onSubmit password
+    const onSubmitPassword = ({ password }: { password: string }) => {
+        resetPasswordMutation.mutate({ password });
     };
 
   return (
@@ -83,46 +151,51 @@ const ForgotPassword = () => {
 
         <div className='w-full flex justify-center'>
             <div className='md:w-[480px] p-8 bg-white shadow rounded-3xl'>
-                <h3 className='text-3xl font-semibold text-center mb-2'>
-                    Reset your password
-                </h3>
-                <p className='text-center text-gray-600 mb-4'>
-                    Go back to {" "}
-                    <Link href={"/login"} className='text-blue-600 font-semibold'>login</Link>
-                </p>
-
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    {/* Email textbox */}
-                    <label className='block text-gray-700 mb-1'>Email</label>
-                    <input type="email"
-                           placeholder='name@example.com'
-                           className='w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2'
-                           { ...register("email", {
+                {step === "email" && (
+                    <>
+                    <h3 className='text-3xl font-semibold text-center mb-2'>
+                        Reset your password
+                    </h3>
+                    <p className='text-center text-gray-600 mb-4'>
+                        Go back to {" "}
+                        <Link href={"/login"} className='text-blue-600 font-semibold'>login</Link>
+                    </p>
+                    <form onSubmit={handleSubmit(onSubmitEmail)}>
+                        {/* Email textbox */}
+                        <label className='block text-gray-700 mb-1'>Email</label>
+                        <input type="email"
+                            placeholder='name@example.com'
+                            className='w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2'
+                            {...register("email", {
                                 required: "Email is required",
                                 pattern: {
                                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                                     message: "Invalid email address",
                                 }
-                           })}
-                    />
-                    {errors.email && (
-                        <p className='text-red-600 text-sm'>
-                            {String(errors.email.message)}
-                        </p>
-                    )}
+                            })}
+                        />
+                        {errors.email && (
+                            <p className='text-red-600 text-sm'>
+                                {String(errors.email.message)}
+                            </p>
+                        )}
 
-                    {/* submit button */}
-                    <button
-                        type='submit'
-                        className='w-full text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-full mt-4'
-                    >
-                        Submit
-                    </button>
-                    {serverError && (
-                        <p className='text-red-600 text-sm mt-2'>{serverError}</p>
-                    )}
-                </form>
+                        {/* submit button */}
+                        <button
+                            type='submit'
+                            disabled={requestOtpMutation.isPending}
+                            className='w-full text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-full mt-4'
+                        >
+                            {requestOtpMutation.isPending ? "Sending OTP..." : "Send OTP"}
+                        </button>
+                        {serverError && (
+                            <p className='text-red-600 text-sm mt-2'>{serverError}</p>
+                        )}
+                    </form>
+                    </>
+                )}
+
+                
             </div>
         </div>
     </div>

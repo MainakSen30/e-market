@@ -102,7 +102,9 @@ const Signup = () => {
 
     //resend OTP handler function
     const resendOtp = () => {
-        //TODO: resend OTP function
+        if(userData) {
+            signupMutation.mutate(userData);
+        }
     };
 
   return (
