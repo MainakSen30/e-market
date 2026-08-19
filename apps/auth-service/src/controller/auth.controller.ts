@@ -15,7 +15,7 @@ import {
 import prisma from "@packages/libs/prisma";
 import { AuthError, ValidationError } from "@packages/error-handler";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { setCookie } from "../utils/cookies/setCookie";
 
 // Initiates the registration flow for a new user.
@@ -144,6 +144,54 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
                 name: user.name
             }
         });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// refresh token for the user so that the user can remain logged in
+export const refreshTokenUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const refreshToken = req.cookies.refresh_token;
+
+        if (!refreshToken) {
+            return new AuthError("Unauthorized! No refresh token!");
+        }
+
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as {
+            id: string,
+            role: string
+        };
+
+        if(!decoded || !decoded.id || !decoded.role) {
+            return new JsonWebTokenError("Forbidden! Invalid refresh token!");
+        }
+
+        //ensure whether the seller or user account exists in the database
+        //let account;
+        //if(decoded.role === "user") {
+        const user = await prisma.users.findUnique({
+            where: {
+                id: decoded.id,
+            }
+        });
+
+        if(!user) {
+            return new AuthError("Forbidden! Invalid refresh token!");
+        }
+
+        // sign a new access token
+        const accessTokenAuth = jwt.sign(
+            { id: user.id, role: "user" },
+            process.env.ACCESS_TOKEN_SECRET as string,
+            { expiresIn: "15m" }
+        );
+        setCookie(res, "access_token", accessTokenAuth);
+
+        res.status(201).json({
+            success: true
+        });
+
     } catch (error) {
         return next(error);
     }

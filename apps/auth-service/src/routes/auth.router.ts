@@ -5,7 +5,8 @@ import {
     verifyUser,
     forgotPassword,
     veriyUserResetPassword,
-    resetPassword
+    resetPassword,
+    refreshTokenUser
 } from "../controller/auth.controller";
 
 const router: Router = express.Router();
@@ -16,6 +17,7 @@ router.post("/verify-user", verifyUser);
 
 // Login
 router.post("/login-user", loginUser);
+router.post("/refresh-token-user", refreshTokenUser)
 
 // Forgot password flow
 router.post("/forgot-password-user", forgotPassword);
