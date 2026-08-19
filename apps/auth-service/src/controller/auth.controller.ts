@@ -36,8 +36,8 @@ export const userRegistration = async (req: Request, res: Response, next: NextFu
         }
 
         // Enforce rate limits and cooldown windows before sending OTP
-        await checkOtpRestrictions(email, next);
-        await trackOtpRequest(email, next);
+        await checkOtpRestrictions(email);
+        await trackOtpRequest(email);
 
         // Send the OTP to the user's email
         await sendOtp(name, email, "user-activation-mail");
@@ -155,7 +155,7 @@ export const refreshTokenUser = async (req: Request, res: Response, next: NextFu
         const refreshToken = req.cookies.refresh_token;
 
         if (!refreshToken) {
-            return new AuthError("Unauthorized! No refresh token!");
+            return next(new AuthError("Unauthorized! No refresh token!"));
         }
 
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as {
@@ -164,7 +164,7 @@ export const refreshTokenUser = async (req: Request, res: Response, next: NextFu
         };
 
         if(!decoded || !decoded.id || !decoded.role) {
-            return new JsonWebTokenError("Forbidden! Invalid refresh token!");
+            return next(new JsonWebTokenError("Forbidden! Invalid refresh token!"));
         }
 
         //ensure whether the seller or user account exists in the database
@@ -177,7 +177,7 @@ export const refreshTokenUser = async (req: Request, res: Response, next: NextFu
         });
 
         if(!user) {
-            return new AuthError("Forbidden! Invalid refresh token!");
+            return next(new AuthError("Forbidden! Invalid refresh token!"));
         }
 
         // sign a new access token
@@ -197,6 +197,19 @@ export const refreshTokenUser = async (req: Request, res: Response, next: NextFu
     }
 }
 
+// get logged in user
+export const getUser = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        res.status(201).json({
+            success: true,
+            user,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Initiates the forgot password flow by sending an OTP to the user's registered email.
 // Delegates to handleForgotPassword in auth.helper with the "user" role.
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -206,7 +219,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 // Verifies the OTP sent during the forgot password flow.
 // On success, the client can proceed to the reset password step.
 // Delegates to verifyFOrgotPasswordOtp in auth.helper with the "user" role.
-export const veriyUserResetPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const veriyUserForgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     await verifyForgotPasswordOtp(req, res, next);
 }
 
