@@ -312,13 +312,23 @@ const Signup = () => {
               {/* Terms hint */}
               <p className="text-[11px] text-slate-500 text-center leading-relaxed">
                 By creating an account, you agree to our{' '}
-                <span className="text-[#2c3e6b] font-medium cursor-pointer hover:underline">
+                <Link
+                  href="/terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2c3e6b] font-semibold hover:underline underline-offset-2 transition-colors"
+                >
                   Terms of Service
-                </span>{' '}
+                </Link>{' '}
                 and{' '}
-                <span className="text-[#2c3e6b] font-medium cursor-pointer hover:underline">
+                <Link
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#2c3e6b] font-semibold hover:underline underline-offset-2 transition-colors"
+                >
                   Privacy Policy
-                </span>
+                </Link>
                 .
               </p>
 
