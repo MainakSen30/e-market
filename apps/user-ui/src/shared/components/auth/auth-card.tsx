@@ -33,12 +33,12 @@ export const AuthCard: React.FC<AuthCardProps> = ({
       <div className="relative z-10 w-full max-w-6xl mx-auto flex items-center justify-between">
         <Link
           href="/"
-          className="group flex items-center gap-2.5 text-2xl font-bold tracking-tight text-[#2c3e6b] transition-transform duration-200 hover:scale-[1.02]"
+          className="group flex items-center gap-2.5 text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b] transition-transform duration-200 hover:scale-[1.02]"
         >
           <span className="bg-[#2c3e6b] text-white p-2 rounded-xl flex items-center justify-center shadow-sm group-hover:bg-[#202f52] transition-colors">
             <ShoppingBasket className="w-5 h-5 text-white" />
           </span>
-          <span>Emarket</span>
+          <span className="text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b]">Emarket</span>
         </Link>
 
         {showBackToHome && (
