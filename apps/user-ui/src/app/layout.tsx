@@ -1,4 +1,4 @@
-import Header from '../shared/widgets/header';
+import HeaderWrapper from '../shared/widgets/header/header-wrapper';
 import './global.css';
 import { Poppins, Roboto } from "next/font/google";
 import Providers from './providers';
@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto.variable} ${poppins.variable}`}>
         <Providers>
-          <Header/>
+          <HeaderWrapper/>
           {children}
         </Providers>
       </body>

@@ -3,10 +3,11 @@ import React from "react";
 const GoogleLogo = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
+        width="18"
+        height="18"
         viewBox="0 0 48 48"
         aria-hidden="true"
+        className="shrink-0"
     >
         <path
             fill="#4285F4"
@@ -30,11 +31,11 @@ const GoogleLogo = () => (
 const GoogleButton = () => (
     <button
         type="button"
-        className="flex h-11 w-full items-center justify-center gap-3 rounded-full border border-[#C7D2FE] bg-[#EEF2FF] font-Poppins text-[13px] font-medium tracking-wide text-[#3730A3] transition-colors hover:bg-[#E0E7FF]"
+        className="flex h-11 sm:h-12 w-full items-center justify-center gap-3 rounded-xl sm:rounded-2xl border border-slate-200 bg-white font-Poppins text-sm font-medium tracking-wide text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 hover:shadow active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-1"
         aria-label="Sign in with Google"
     >
         <GoogleLogo />
-        <span>Sign in with Google</span>
+        <span>Continue with Google</span>
     </button>
 );
 

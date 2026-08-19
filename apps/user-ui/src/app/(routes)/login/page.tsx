@@ -1,164 +1,221 @@
 "use client";
+import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import GoogleButton from 'apps/user-ui/src/shared/components/google-button';
 import axios, { AxiosError } from 'axios';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import GoogleButton from '../../../shared/components/google-button';
+import AuthCard from '../../../shared/components/auth/auth-card';
+import AuthButton from '../../../shared/components/auth/auth-button';
 
-//formdata
 type LoginFormdata = {
-    email: string;
-    password: string;
-}
+  email: string;
+  password: string;
+};
 
 const Login = () => {
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [rememberMe, setRememberMe] = useState(false);
-    const router = useRouter();
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
 
-    //react hook form
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginFormdata>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormdata>();
 
-    //login mutation
-    const loginMutation = useMutation({
-        mutationFn: async (data: LoginFormdata) => {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
-                data,
-                { withCredentials: true }
-            );
-            return response.data;
-        },
-        onSuccess: (data) => {
-            setServerError(null);
-            router.push("/");
-        },
-        onError: (error: AxiosError) => {
-            const errorMessage = (error.response?.data as { message?: string })?.message || "Invalid credentials!";
-            setServerError(errorMessage);
-        }
-    })
+  const loginMutation = useMutation({
+    mutationFn: async (data: LoginFormdata) => {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+        data,
+        { withCredentials: true }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      setServerError(null);
+      toast.success('Login successful. Welcome back!');
+      router.push('/');
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage =
+        (error.response?.data as { message?: string })?.message ||
+        'Invalid email or password.';
+      setServerError(errorMessage);
+      toast.error(errorMessage);
+    },
+  });
 
-    //form submit function
-    const onSubmit = (data: LoginFormdata) => {
-        loginMutation.mutate(data);
-    };
+  const onSubmit = (data: LoginFormdata) => {
+    setServerError(null);
+    loginMutation.mutate(data);
+  };
 
   return (
-    <div className='w-full py-10 min-h-[85vh] bg-[#f1f1f1]'>
-        <h1 className='text-4xl font-Poppins font-semibold text-black text-center'>
-            Login
-        </h1>
-        <p className='text-center text-lg font-medium py-3 text-[#00000099]'>
-            Home . Login
+    <AuthCard
+      title="Login to Emarket"
+      breadcrumb="Home • Login"
+      subtitle={
+        <p>
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/signup"
+            className="text-[#2c3e6b] font-semibold hover:underline underline-offset-4 transition-colors"
+          >
+            Sign up
+          </Link>
         </p>
+      }
+    >
+      <div className="space-y-4">
+        <GoogleButton />
 
-        <div className='w-full flex justify-center'>
-            <div className='md:w-[480px] p-8 bg-white shadow rounded-3xl'>
-                <h3 className='text-3xl font-semibold text-center mb-2'>
-                    Login to Emarket
-                </h3>
-                <p className='text-center text-gray-600 mb-4'>
-                    Don't have an account?{" "}
-                    <Link href={"/signup"} className='text-blue-600 font-semibold'>Sign up</Link>
-                </p>
-
-                <GoogleButton />
-
-                {/* Email login */}
-                <div className='flex items-center my-5 text-gray-400 text-sm'>
-                    <div className='flex-1 border-t border-gray-300'/>
-                    <span className='px-3'>or Sign in with Email</span>
-                    <div className='flex-1 border-t border-gray-300'/>
-                </div>
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    {/* Email textbox */}
-                    <label className='block text-gray-700 mb-1'>Email</label>
-                    <input type="email"
-                           placeholder='name@example.com'
-                           className='w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2'
-                           { ...register("email", {
-                                required: "Email is required",
-                                pattern: {
-                                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                                    message: "Invalid email address",
-                                }
-                           })}
-                    />
-                    {errors.email && (
-                        <p className='text-red-600 text-sm'>
-                            {String(errors.email.message)}
-                        </p>
-                    )}
-
-                    {/* password textbox */}
-                    <label className='block text-gray-700 mb-1'>Password</label>
-                    <div className='relative'>
-                        <input type={passwordVisible ? "text" : "password"}
-                               placeholder='Enter your password'
-                               className='w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2'
-                               { ...register("password", {
-                                    required: "Password is required",
-                                    minLength: {
-                                        value: 6,
-                                        message: "Password must be at least 6 characters",
-                                    }
-                               })}
-                        />
-                        <button type='button' onClick={() => setPasswordVisible(!passwordVisible)}
-                            className='absolute inset-y-0 right-3 flex items-center text-gray-400'
-                        >
-                            {passwordVisible ? <Eye /> : <EyeOff />}
-                        </button>
-
-                        {errors.password && (
-                            <p className='text-red-600 tex-sm'>
-                                {String(errors.password.message)}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Remember me */}
-                    <div className='flex justify-between items-center my-4'>
-                        <label className='flex items-center text-gray-500'>
-                            <input
-                                type='checkbox'
-                                className='mr-2 rounded-lg'
-                                checked={rememberMe}
-                                onChange={() => setRememberMe(!rememberMe)}
-                            />
-                            Remember me
-                        </label>
-                        <Link href={"/forgot-password"} className='text-blue-600 text-sm'>
-                            forgot Password?
-                        </Link>
-                    </div>
-
-                    {/* submit button */}
-                    <button
-                        type='submit'
-                        disabled={loginMutation.isPending}
-                        className='w-full text-lg cursor-pointer bg-[#2c3e6b] text-white py-2 rounded-full'
-                    >
-                        {loginMutation?.isPending ? "Logging in..." : "Login"}
-                    </button>
-                    {serverError && (
-                        <p className='text-red-600 text-sm mt-2'>{serverError}</p>
-                    )}
-                </form>
-            </div>
+        {/* Divider */}
+        <div className="relative flex items-center my-5">
+          <div className="flex-grow border-t border-slate-200" />
+          <span className="flex-shrink mx-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+            or sign in with email
+          </span>
+          <div className="flex-grow border-t border-slate-200" />
         </div>
-    </div>
-  )
-}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+          {/* Email Input */}
+          <div className="space-y-1.5 text-left">
+            <label
+              htmlFor="login-email"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700"
+            >
+              Email Address
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <Mail className="h-4 w-4" />
+              </div>
+              <input
+                id="login-email"
+                type="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                className={`w-full h-11 rounded-xl border pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
+                  errors.email
+                    ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
+                    : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                }`}
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'Please enter a valid email address',
+                  },
+                })}
+              />
+            </div>
+            {errors.email && (
+              <p className="flex items-center gap-1 text-xs text-red-600 mt-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{String(errors.email.message)}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Password Input */}
+          <div className="space-y-1.5 text-left">
+            <label
+              htmlFor="login-password"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <Lock className="h-4 w-4" />
+              </div>
+              <input
+                id="login-password"
+                type={passwordVisible ? 'text' : 'password'}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                className={`w-full h-11 rounded-xl border pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
+                  errors.password
+                    ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
+                    : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                }`}
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters',
+                  },
+                })}
+              />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+              >
+                {passwordVisible ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="flex items-center gap-1 text-xs text-red-600 mt-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{String(errors.password.message)}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between pt-1">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-[#2c3e6b] focus:ring-[#2c3e6b]/20"
+              />
+              <span className="text-xs sm:text-sm text-slate-600">Remember me</span>
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-xs sm:text-sm font-medium text-[#2c3e6b] hover:underline underline-offset-4 transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          {/* Server Error Alert */}
+          {serverError && (
+            <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200/80 p-3 text-xs sm:text-sm text-red-700">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <span>{serverError}</span>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div className="pt-2">
+            <AuthButton
+              type="submit"
+              isLoading={loginMutation.isPending}
+              loadingText="Signing In..."
+            >
+              Sign In
+            </AuthButton>
+          </div>
+        </form>
+      </div>
+    </AuthCard>
+  );
+};
 
 export default Login;

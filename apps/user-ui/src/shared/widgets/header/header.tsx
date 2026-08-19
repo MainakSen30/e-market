@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react'
-import { HeartIcon, Search, ShoppingBag } from 'lucide-react'
+import { HeartIcon, Search, ShoppingBag, ShoppingBasket } from 'lucide-react'
 import ProfileIcon from '../../../assets/svgs/profile-icon';
 import HeaderBottom from './header-bottom';
 
@@ -11,8 +11,14 @@ const Header = () => {
 
         {/* Brand logo */}
         <div>
-          <Link href={"/"}>
-            <span className='text-2xl font-bold'>Emarket</span>
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 text-2xl font-bold tracking-tight text-[#2c3e6b] transition-transform duration-200 hover:scale-[1.02]"
+          >
+            <span className="bg-[#2c3e6b] text-white p-2 rounded-xl flex items-center justify-center shadow-sm group-hover:bg-[#202f52] transition-colors">
+              <ShoppingBasket className="w-5 h-5 text-white" />
+            </span>
+            <span className="text-2xl font-bold text-slate-900">Emarket</span>
           </Link>
         </div>
 
