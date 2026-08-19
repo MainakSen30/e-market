@@ -18,8 +18,8 @@ router.post("/verify-user", verifyUser);
 router.post("/login-user", loginUser);
 
 // Forgot password flow
-router.post("/forgot-password", forgotPassword);
-router.post("/verify-forgot-password-otp", veriyUserResetPassword);
-router.post("/reset-password", resetPassword);
+router.post("/forgot-password-user", forgotPassword);
+router.post("/verify-forgot-password-user", veriyUserResetPassword);
+router.post("/reset-password-user", resetPassword);
 
 export default router;
