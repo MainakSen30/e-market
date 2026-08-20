@@ -7,7 +7,6 @@ import {
     checkOtpRestrictions,
     handleForgotPassword,
     sendOtp,
-    trackOtpRequest,
     validateRegistrationData,
     verifyOtp,
     verifyForgotPasswordOtp
@@ -35,9 +34,8 @@ export const userRegistration = async (req: Request, res: Response, next: NextFu
             return next(new ValidationError("User already exists with this email"));
         }
 
-        // Enforce rate limits and cooldown windows before sending OTP
+        // Enforce cooldown / spam-lock before sending OTP
         await checkOtpRestrictions(email);
-        await trackOtpRequest(email);
 
         // Send the OTP to the user's email
         await sendOtp(name, email, "user-activation-mail");
