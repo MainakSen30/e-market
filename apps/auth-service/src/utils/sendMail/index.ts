@@ -1,7 +1,9 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import ejs from "ejs";
-import path from "path"
+import path from "path";
+import { existsSync } from "fs";
+import { resolveEmailSubject } from "../email-templates/config";
 
 dotenv.config();
 
@@ -15,17 +17,25 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+const getTemplateDir = (): string => {
+    const candidates = [
+        path.join(process.cwd(), "apps/auth-service/src/utils/email-templates"),
+        path.join(__dirname, "../email-templates"),
+        path.join(__dirname, "email-templates"),
+    ];
+
+    for (const dir of candidates) {
+        if (existsSync(dir)) {
+            return dir;
+        }
+    }
+
+    throw new Error("Email templates directory not found");
+};
+
 //render an EJS template
 const renderEmailTemplate = async (templateName: string, data: Record<string, any>): Promise<string> => {
-    const templatePath = path.join(
-        process.cwd(),
-        "apps",
-        "auth-service",
-        "src",
-        "utils",
-        "email-templates",
-        `${templateName}.ejs`
-    );
+    const templatePath = path.join(getTemplateDir(), `${templateName}.ejs`);
 
     return ejs.renderFile(templatePath, data);
 };
@@ -39,10 +49,7 @@ export const sendEmail = async (
 ) => {
     try {
         const html = await renderEmailTemplate(templateName, data);
-
-        // Extract <title> from the rendered HTML if subject is not explicitly provided
-        const extractedTitle = html.match(/<title[^>]*>(.*?)<\/title>/i)?.[1]?.trim();
-        const emailSubject = subject || extractedTitle || "E-market Notification";
+        const emailSubject = resolveEmailSubject(templateName, data, subject);
 
         await transporter.sendMail({
             from: `${process.env.SMTP_USER}`,
