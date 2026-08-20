@@ -62,7 +62,7 @@ export const trackOtpRequest = async (email: string) => {
 // Also sets a 1 minute cooldown to prevent back-to-back OTP requests.
 export const sendOtp = async (name: string, email: string, template: string) => {
     const otp = crypto.randomInt(1000, 9999).toString();
-    await sendEmail(email, "Verify your Email", template, { name, otp });
+    await sendEmail(email, undefined, template, { name, otp });
 
     // Store the OTP in Redis — expires after 5 minutes
     await redis.set(`otp: ${email}`, otp, "EX", 300);

@@ -31,18 +31,28 @@ const renderEmailTemplate = async (templateName: string, data: Record<string, an
 };
 
 //send an email using nodemailer
-export const sendEmail = async (to: string, subject: string, templateName: string, data: Record<string, any>) => {
+export const sendEmail = async (
+    to: string,
+    subject: string | undefined,
+    templateName: string,
+    data: Record<string, any>
+) => {
     try {
         const html = await renderEmailTemplate(templateName, data);
+
+        // Extract <title> from the rendered HTML if subject is not explicitly provided
+        const extractedTitle = html.match(/<title[^>]*>(.*?)<\/title>/i)?.[1]?.trim();
+        const emailSubject = subject || extractedTitle || "E-market Notification";
+
         await transporter.sendMail({
             from: `${process.env.SMTP_USER}`,
             to,
-            subject,
+            subject: emailSubject,
             html,
         });
         return true;
     } catch (error) {
-        console.log("Error sending email", error)
+        console.log("Error sending email", error);
         return false;
     }
-}
+};
