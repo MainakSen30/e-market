@@ -98,8 +98,8 @@ export const verifyOtp = async (email: string, otp: string) => {
         throw new ValidationError(`Incorrect OTP. You have ${2 - failedAttempts} attempt(s) remaining.`);
     }
 
-    // OTP matched — clean up both keys
-    await redis.del(`otp: ${email}`, failedAttemptsKey);
+    // OTP matched — clean up keys
+    await redis.del(`otp: ${email}`, failedAttemptsKey, `otp_request_count: ${email}`);
 }
 
 // Handles the forgot password initiation for both users and sellers.
