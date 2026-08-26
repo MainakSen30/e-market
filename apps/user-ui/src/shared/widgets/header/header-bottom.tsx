@@ -1,6 +1,7 @@
 "use client";
 import ProfileIcon from 'apps/user-ui/src/assets/svgs/profile-icon';
 import { navItems } from 'apps/user-ui/src/configs/constants';
+import useUser from 'apps/user-ui/src/hooks/useUser';
 import { AlignLeft, ChevronDown, HeartIcon, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
@@ -8,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 const HeaderBottom = () => {
     const [show, setShow] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
-
+    const { user, isLoading } = useUser();
     // Switch into sticky mode once the user scrolls past 100px,
     // and revert when they scroll back to the top.
     useEffect(() => {
@@ -118,13 +119,37 @@ const HeaderBottom = () => {
                         >
                             {/* Profile icon + sign-in stacked text */}
                             <div className='flex items-center gap-2'>
-                                <Link href={"/login"}>
-                                    <ProfileIcon />
-                                </Link>
-                                <Link href={"/login"} className='flex flex-col leading-tight'>
-                                    <span className='text-xs text-gray-500'>Hello,</span>
-                                    <span className='font-bold text-sm text-[#2c3e6b]'>Sign In</span>
-                                </Link>
+                                { !isLoading && user ? (
+                                    <>
+                                        <Link href={"/profile"}>
+                                            <ProfileIcon />
+                                        </Link>
+                                        <Link href={"/profile"} className='flex flex-col leading-tight'>
+                                            <span className='text-xs text-gray-500'>Hello,</span>
+                                            <span className='font-bold text-sm text-[#2c3e6b]'>{user?.name?.split(" ")[0]}</span>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link href={"/login"}>
+                                            <ProfileIcon />
+                                        </Link>
+                                        <Link href={"/login"} className='flex flex-col leading-tight'>
+                                            <span className='text-xs text-gray-500'>Hello,</span>
+                                            <span className='font-bold text-sm text-[#2c3e6b]'>
+                                              {isLoading ? (
+                                                <span className='inline-flex items-center gap-1 h-5'>
+                                                  <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce [animation-delay:-0.2s]' />
+                                                  <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce [animation-delay:-0.10s]' />
+                                                  <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce' />
+                                                </span>
+                                              ) : (
+                                                'Sign In'
+                                              )}
+                                            </span>
+                                        </Link>
+                                    </>
+                                )}
                             </div>
 
                             {/* Wishlist and cart icons with count badges */}

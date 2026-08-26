@@ -1,10 +1,13 @@
+"use client";
 import Link from 'next/link';
 import React from 'react'
 import { HeartIcon, Search, ShoppingBag, ShoppingBasket } from 'lucide-react'
 import ProfileIcon from '../../../assets/svgs/profile-icon';
 import HeaderBottom from './header-bottom';
+import useUser from 'apps/user-ui/src/hooks/useUser';
 
 const Header = () => {
+    const { user, isLoading } = useUser();
   return (
     <div className='w-full bg-white'>
       <div className='w-[80%] py-4 m-auto flex items-center gap-8'>
@@ -42,13 +45,37 @@ const Header = () => {
 
           {/* Profile icon + "Hello, Sign In" stacked text */}
           <div className='flex items-center gap-2'>
-            <Link href={"/login"}>
-              <ProfileIcon />
-            </Link>
-            <Link href={"/login"} className='flex flex-col leading-tight'>
-              <span className='text-xs text-gray-500'>Hello,</span>
-              <span className='font-bold text-sm text-[#2c3e6b]'>Sign In</span>
-            </Link>
+            { !isLoading && user ? (
+                <>
+                    <Link href={"/profile"}>
+                        <ProfileIcon />
+                    </Link>
+                    <Link href={"/profile"} className='flex flex-col leading-tight'>
+                        <span className='text-xs text-gray-500'>Hello,</span>
+                        <span className='font-bold text-sm text-[#2c3e6b]'>{user?.name?.split(" ")[0]}</span>
+                    </Link>
+                </>
+            ) : (
+                <>
+                    <Link href={"/login"}>
+                        <ProfileIcon />
+                    </Link>
+                    <Link href={"/login"} className='flex flex-col leading-tight'>
+                        <span className='text-xs text-gray-500'>Hello,</span>
+                        <span className='font-bold text-sm text-[#2c3e6b]'>
+                          {isLoading ? (
+                            <span className='inline-flex items-center gap-1 h-5'>
+                              <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce [animation-delay:-0.2s]' />
+                              <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce [animation-delay:-0.10s]' />
+                              <span className='w-1.5 h-1.5 rounded-full bg-[#2c3e6b] animate-bounce' />
+                            </span>
+                          ) : (
+                            'Sign In'
+                          )}
+                        </span>
+                    </Link>
+                </>
+            )}
           </div>
 
           {/* Wishlist and cart icons with item count badges */}
