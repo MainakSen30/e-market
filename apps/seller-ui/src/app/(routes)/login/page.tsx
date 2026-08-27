@@ -58,7 +58,7 @@ const Login = () => {
   return (
     <AuthCard
       title="Login to Emarket"
-      breadcrumb="Home • Login"
+      breadcrumb="Home • Seller Panel • Login"
       subtitle={
         <p>
           Don&apos;t have an account?{' '}
