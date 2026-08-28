@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import AuthCard from '../../../shared/components/auth/auth-card';
 import AuthButton from '../../../shared/components/auth/auth-button';
+import Stepper from '../../../shared/components/stepper/stepper';
 
 type SignupFormData = {
   name: string;
@@ -143,6 +144,7 @@ const Signup = () => {
 
   return (
     <AuthCard
+      stepper={<Stepper currentStep={1} />}
       title={showOtp ? 'Verify your email' : 'Create an account'}
       breadcrumb={showOtp ? 'Home • Seller Panel • Signup • Verification' : 'Home • Seller Panel • Signup'}
       subtitle={

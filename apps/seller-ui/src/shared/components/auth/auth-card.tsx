@@ -1,12 +1,12 @@
 import React from 'react';
-import Link from 'next/link';
-import { ArrowLeft, ShieldCheck, ShoppingBasket } from 'lucide-react';
+import { ShieldCheck, ShoppingBasket } from 'lucide-react';
 
 interface AuthCardProps {
   title: string;
   subtitle?: React.ReactNode;
   breadcrumb: string;
   showBackToHome?: boolean;
+  stepper?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -15,6 +15,7 @@ export const AuthCard: React.FC<AuthCardProps> = ({
   subtitle,
   breadcrumb,
   showBackToHome = true,
+  stepper,
   children,
 }) => {
   return (
@@ -53,6 +54,9 @@ export const AuthCard: React.FC<AuthCardProps> = ({
 
       {/* Main Content Area */}
       <div className="relative z-10 w-full flex flex-col items-center justify-center my-6">
+        {/* Stepper */}
+        {stepper && <div className="w-full mb-6 sm:mb-8">{stepper}</div>}
+
         {/* Breadcrumb */}
         <div className="mb-4 text-center">
           <p className="text-xs sm:text-sm font-medium text-slate-400 tracking-wide uppercase">
