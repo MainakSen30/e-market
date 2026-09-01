@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 import {
   ShieldCheck,
   Lock,
@@ -14,7 +14,7 @@ import {
   Mail,
   ArrowRight,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
 const PrivacyPolicy = () => {
   const lastUpdated = "August 19, 2026";
@@ -27,13 +27,29 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            When you visit Emarket, create an account, place an order, or browse our marketplace, we collect information necessary to provide a safe and seamless shopping experience:
+            When you visit Emarket, create an account, place an order, or browse
+            our marketplace, we collect information necessary to provide a safe
+            and seamless shopping experience:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li><strong>Personal Identification Details:</strong> Name, email address, phone number, shipping address, and billing information.</li>
-            <li><strong>Transactional Data:</strong> Purchase history, payment methods (tokenized securely via PCI-compliant processors), invoices, and return requests.</li>
-            <li><strong>Technical & Device Data:</strong> IP address, browser type, operating system, unique device identifiers, and referral URLs.</li>
-            <li><strong>Usage Patterns:</strong> Products viewed, wishlist items, search queries, cart additions, and interaction timestamps.</li>
+            <li>
+              <strong>Personal Identification Details:</strong> Name, email
+              address, phone number, shipping address, and billing information.
+            </li>
+            <li>
+              <strong>Transactional Data:</strong> Purchase history, payment
+              methods (tokenized securely via PCI-compliant processors),
+              invoices, and return requests.
+            </li>
+            <li>
+              <strong>Technical & Device Data:</strong> IP address, browser
+              type, operating system, unique device identifiers, and referral
+              URLs.
+            </li>
+            <li>
+              <strong>Usage Patterns:</strong> Products viewed, wishlist items,
+              search queries, cart additions, and interaction timestamps.
+            </li>
           </ul>
         </div>
       ),
@@ -45,14 +61,29 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            We process your personal information strictly for legitimate commercial and operational purposes:
+            We process your personal information strictly for legitimate
+            commercial and operational purposes:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li>To process, pack, fulfill, track, and deliver your marketplace orders.</li>
-            <li>To verify identity, send OTP authentication codes, and protect accounts against unauthorized takeover.</li>
-            <li>To prevent fraud, chargeback abuse, and counterfeit product distribution.</li>
-            <li>To personalize product recommendations, promotional offers, and shopping feeds.</li>
-            <li>To provide responsive customer support and resolve order disputes.</li>
+            <li>
+              To process, pack, fulfill, track, and deliver your marketplace
+              orders.
+            </li>
+            <li>
+              To verify identity, send OTP authentication codes, and protect
+              accounts against unauthorized takeover.
+            </li>
+            <li>
+              To prevent fraud, chargeback abuse, and counterfeit product
+              distribution.
+            </li>
+            <li>
+              To personalize product recommendations, promotional offers, and
+              shopping feeds.
+            </li>
+            <li>
+              To provide responsive customer support and resolve order disputes.
+            </li>
           </ul>
         </div>
       ),
@@ -64,13 +95,31 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            <strong>We do not sell your personal data to third parties.</strong> We only share information with trusted partners under strict confidentiality agreements:
+            <strong>We do not sell your personal data to third parties.</strong>{" "}
+            We only share information with trusted partners under strict
+            confidentiality agreements:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li><strong>Marketplace Vendors:</strong> When you purchase an item fulfilled by a third-party seller, we share only the shipping name, address, and contact info required for packaging and dispatch.</li>
-            <li><strong>Payment Gateways:</strong> Encrypted payment token transfers to process transactions securely.</li>
-            <li><strong>Logistics & Couriers:</strong> Delivery partners receive your address and contact number for parcel drop-off and SMS updates.</li>
-            <li><strong>Legal & Regulatory Authorities:</strong> Only when strictly required by subpoena, court order, or applicable law to protect platform integrity.</li>
+            <li>
+              <strong>Marketplace Vendors:</strong> When you purchase an item
+              fulfilled by a third-party seller, we share only the shipping
+              name, address, and contact info required for packaging and
+              dispatch.
+            </li>
+            <li>
+              <strong>Payment Gateways:</strong> Encrypted payment token
+              transfers to process transactions securely.
+            </li>
+            <li>
+              <strong>Logistics & Couriers:</strong> Delivery partners receive
+              your address and contact number for parcel drop-off and SMS
+              updates.
+            </li>
+            <li>
+              <strong>Legal & Regulatory Authorities:</strong> Only when
+              strictly required by subpoena, court order, or applicable law to
+              protect platform integrity.
+            </li>
           </ul>
         </div>
       ),
@@ -82,10 +131,14 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            We use cookies, local storage, and secure session tokens to remember your shopping cart items, keep you authenticated across page refreshes, and evaluate marketplace performance.
+            We use cookies, local storage, and secure session tokens to remember
+            your shopping cart items, keep you authenticated across page
+            refreshes, and evaluate marketplace performance.
           </p>
           <p>
-            You can configure your browser to decline non-essential cookies. However, disabling essential cookies may impact checkout functionality and personalized shopping features.
+            You can configure your browser to decline non-essential cookies.
+            However, disabling essential cookies may impact checkout
+            functionality and personalized shopping features.
           </p>
         </div>
       ),
@@ -97,13 +150,23 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            Security is central to our infrastructure. We employ industry-standard security safeguards:
+            Security is central to our infrastructure. We employ
+            industry-standard security safeguards:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li>End-to-end 256-bit TLS/SSL encryption for all data in transit.</li>
-            <li>Bcrypt salted password hashing with strict computational rounds.</li>
-            <li>Rate limiting, Redis OTP protection, and automated intrusion detection.</li>
-            <li>Restricted, role-based employee access to backend database nodes.</li>
+            <li>
+              End-to-end 256-bit TLS/SSL encryption for all data in transit.
+            </li>
+            <li>
+              Bcrypt salted password hashing with strict computational rounds.
+            </li>
+            <li>
+              Rate limiting, Redis OTP protection, and automated intrusion
+              detection.
+            </li>
+            <li>
+              Restricted, role-based employee access to backend database nodes.
+            </li>
           </ul>
         </div>
       ),
@@ -115,13 +178,27 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            Depending on your location (including GDPR, CCPA/CPRA, and applicable consumer laws), you hold the right to:
+            Depending on your location (including GDPR, CCPA/CPRA, and
+            applicable consumer laws), you hold the right to:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
-            <li><strong>Access & Portability:</strong> Request a copy of the personal data we store about you.</li>
-            <li><strong>Rectification:</strong> Update inaccurate account credentials or addresses from your dashboard.</li>
-            <li><strong>Erasure (&quot;Right to be Forgotten&quot;):</strong> Request the permanent deletion of your account and associated records, subject to statutory tax holding requirements.</li>
-            <li><strong>Opt-Out of Marketing:</strong> Unsubscribe from promotional emails anytime via the one-click footer link.</li>
+            <li>
+              <strong>Access & Portability:</strong> Request a copy of the
+              personal data we store about you.
+            </li>
+            <li>
+              <strong>Rectification:</strong> Update inaccurate account
+              credentials or addresses from your dashboard.
+            </li>
+            <li>
+              <strong>Erasure (&quot;Right to be Forgotten&quot;):</strong>{" "}
+              Request the permanent deletion of your account and associated
+              records, subject to statutory tax holding requirements.
+            </li>
+            <li>
+              <strong>Opt-Out of Marketing:</strong> Unsubscribe from
+              promotional emails anytime via the one-click footer link.
+            </li>
           </ul>
         </div>
       ),
@@ -133,7 +210,11 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            As a global multi-vendor platform, our cloud servers and third-party fulfillment services may operate across multiple regions. When data is transferred across international borders, we ensure adequate protection through standard contractual clauses and rigorous vendor audits.
+            As a global multi-vendor platform, our cloud servers and third-party
+            fulfillment services may operate across multiple regions. When data
+            is transferred across international borders, we ensure adequate
+            protection through standard contractual clauses and rigorous vendor
+            audits.
           </p>
         </div>
       ),
@@ -145,7 +226,10 @@ const PrivacyPolicy = () => {
       content: (
         <div className="space-y-3 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
-            We may periodically update this Privacy Policy to reflect changes in regulatory standards or platform capabilities. Material revisions will be highlighted with a banner on our homepage or communicated directly to your registered email address.
+            We may periodically update this Privacy Policy to reflect changes in
+            regulatory standards or platform capabilities. Material revisions
+            will be highlighted with a banner on our homepage or communicated
+            directly to your registered email address.
           </p>
         </div>
       ),
@@ -174,7 +258,8 @@ const PrivacyPolicy = () => {
                 Privacy Policy
               </h1>
               <p className="mt-2 text-sm sm:text-base text-slate-200">
-                Learn how Emarket safeguards your personal data, shopping preferences, and transactions.
+                Learn how Emarket safeguards your personal data, shopping
+                preferences, and transactions.
               </p>
             </div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm text-white shrink-0 self-start md:self-auto">
@@ -231,7 +316,10 @@ const PrivacyPolicy = () => {
             {/* Overview Card */}
             <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm">
               <p className="text-slate-700 leading-relaxed text-sm sm:text-base">
-                At Emarket, we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how your information is collected, encrypted, stored, and utilized when shopping with our verified vendors.
+                At Emarket, we respect your privacy and are committed to
+                protecting your personal data. This Privacy Policy explains how
+                your information is collected, encrypted, stored, and utilized
+                when shopping with our verified vendors.
               </p>
             </div>
 
@@ -259,7 +347,9 @@ const PrivacyPolicy = () => {
             {/* Bottom Callout */}
             <div className="bg-gradient-to-r from-[#2c3e6b] to-[#1e2c4f] text-white p-6 sm:p-8 rounded-2xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="space-y-1">
-                <h3 className="text-lg font-bold">Review our Terms of Service</h3>
+                <h3 className="text-lg font-bold">
+                  Review our Terms of Service
+                </h3>
                 <p className="text-sm text-slate-200">
                   Read our marketplace standards, returns & warranty guidelines.
                 </p>

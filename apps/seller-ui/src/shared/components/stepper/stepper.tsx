@@ -1,5 +1,5 @@
-import React from 'react';
-import { Check } from 'lucide-react';
+import React from "react";
+import { Check } from "lucide-react";
 
 export interface StepItem {
   title: string;
@@ -12,20 +12,24 @@ export interface StepperProps {
 }
 
 const DEFAULT_STEPS: StepItem[] = [
-  { title: 'Create Account' },
-  { title: 'Setup Shop' },
-  { title: 'Connect Bank' },
+  { title: "Create Account" },
+  { title: "Setup Shop" },
+  { title: "Connect Bank" },
 ];
 
 export const Stepper: React.FC<StepperProps> = ({
   currentStep = 1,
   steps = DEFAULT_STEPS,
-  className = '',
+  className = "",
 }) => {
   const totalSteps = steps.length;
   // Calculate progress percentage for active connecting bar
   const progressPercent =
-    totalSteps > 1 ? ((Math.min(Math.max(currentStep, 1), totalSteps) - 1) / (totalSteps - 1)) * 100 : 0;
+    totalSteps > 1
+      ? ((Math.min(Math.max(currentStep, 1), totalSteps) - 1) /
+          (totalSteps - 1)) *
+        100
+      : 0;
 
   return (
     <div className={`w-full max-w-xl mx-auto px-4 ${className}`}>
@@ -59,10 +63,10 @@ export const Stepper: React.FC<StepperProps> = ({
               <div
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all duration-300 ${
                   isActive
-                    ? 'bg-[#2c3e6b] text-white shadow-md shadow-[#2c3e6b]/20 ring-4 ring-[#2c3e6b]/15 scale-105'
+                    ? "bg-[#2c3e6b] text-white shadow-md shadow-[#2c3e6b]/20 ring-4 ring-[#2c3e6b]/15 scale-105"
                     : isCompleted
-                    ? 'bg-[#2c3e6b] text-white shadow-sm'
-                    : 'bg-white text-slate-400 border-2 border-slate-200'
+                      ? "bg-[#2c3e6b] text-white shadow-sm"
+                      : "bg-white text-slate-400 border-2 border-slate-200"
                 }`}
               >
                 {isCompleted ? (
@@ -76,10 +80,10 @@ export const Stepper: React.FC<StepperProps> = ({
               <span
                 className={`mt-2 text-[11px] sm:text-xs tracking-tight text-center whitespace-nowrap transition-colors duration-200 ${
                   isActive
-                    ? 'text-[#2c3e6b] font-semibold'
+                    ? "text-[#2c3e6b] font-semibold"
                     : isCompleted
-                    ? 'text-slate-700 font-medium'
-                    : 'text-slate-400 font-medium'
+                      ? "text-slate-700 font-medium"
+                      : "text-slate-400 font-medium"
                 }`}
               >
                 {step.title}

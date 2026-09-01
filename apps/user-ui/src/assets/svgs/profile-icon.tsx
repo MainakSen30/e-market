@@ -1,6 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const ProfileIcon = ({ size = 22, color = '#2c3e6b' }: { size?: number; color?: string }) => {
+const ProfileIcon = ({
+  size = 22,
+  color = "#2c3e6b",
+}: {
+  size?: number;
+  color?: string;
+}) => {
   return (
     // Circular border container — sized to match the compact header design
     <div
@@ -8,10 +14,10 @@ const ProfileIcon = ({ size = 22, color = '#2c3e6b' }: { size?: number; color?: 
         width: 42,
         height: 42,
         border: `2px solid ${color}`,
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <svg

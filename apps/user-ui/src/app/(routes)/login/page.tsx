@@ -1,15 +1,15 @@
 "use client";
-import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
-import GoogleButton from '../../../shared/components/google-button';
-import AuthCard from '../../../shared/components/auth/auth-card';
-import AuthButton from '../../../shared/components/auth/auth-button';
+import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import GoogleButton from "../../../shared/components/google-button";
+import AuthCard from "../../../shared/components/auth/auth-card";
+import AuthButton from "../../../shared/components/auth/auth-button";
 
 type LoginFormdata = {
   email: string;
@@ -33,19 +33,19 @@ const Login = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
         data,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       return response.data;
     },
     onSuccess: () => {
       setServerError(null);
-      toast.success('Login successful. Welcome back!');
-      router.push('/');
+      toast.success("Login successful. Welcome back!");
+      router.push("/");
     },
     onError: (error: AxiosError) => {
       const errorMessage =
         (error.response?.data as { message?: string })?.message ||
-        'Invalid email or password.';
+        "Invalid email or password.";
       setServerError(errorMessage);
       toast.error(errorMessage);
     },
@@ -62,7 +62,7 @@ const Login = () => {
       breadcrumb="Home • Login"
       subtitle={
         <p>
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link
             href="/signup"
             className="text-[#2c3e6b] font-semibold hover:underline underline-offset-4 transition-colors"
@@ -84,7 +84,11 @@ const Login = () => {
           <div className="flex-grow border-t border-slate-200" />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
           {/* Email Input */}
           <div className="space-y-1.5 text-left">
             <label
@@ -104,14 +108,14 @@ const Login = () => {
                 placeholder="name@example.com"
                 className={`w-full h-11 rounded-xl border pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
                   errors.email
-                    ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                    : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                    : "border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10"
                 }`}
-                {...register('email', {
-                  required: 'Email is required',
+                {...register("email", {
+                  required: "Email is required",
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: 'Please enter a valid email address',
+                    message: "Please enter a valid email address",
                   },
                 })}
               />
@@ -138,19 +142,19 @@ const Login = () => {
               </div>
               <input
                 id="login-password"
-                type={passwordVisible ? 'text' : 'password'}
+                type={passwordVisible ? "text" : "password"}
                 autoComplete="current-password"
                 placeholder="••••••••"
                 className={`w-full h-11 rounded-xl border pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
                   errors.password
-                    ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                    : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                    : "border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10"
                 }`}
-                {...register('password', {
-                  required: 'Password is required',
+                {...register("password", {
+                  required: "Password is required",
                   minLength: {
                     value: 6,
-                    message: 'Password must be at least 6 characters',
+                    message: "Password must be at least 6 characters",
                   },
                 })}
               />
@@ -158,7 +162,7 @@ const Login = () => {
                 type="button"
                 onClick={() => setPasswordVisible(!passwordVisible)}
                 className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
-                aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+                aria-label={passwordVisible ? "Hide password" : "Show password"}
               >
                 {passwordVisible ? (
                   <EyeOff className="h-4 w-4" />
@@ -184,7 +188,9 @@ const Login = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 rounded border-slate-300 text-[#2c3e6b] focus:ring-[#2c3e6b]/20"
               />
-              <span className="text-xs sm:text-sm text-slate-600">Remember me</span>
+              <span className="text-xs sm:text-sm text-slate-600">
+                Remember me
+              </span>
             </label>
             <Link
               href="/forgot-password"

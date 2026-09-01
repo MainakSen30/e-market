@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import {
-    loginUser,
-    userRegistration,
-    verifyUser,
-    forgotPassword,
-    veriyUserForgotPassword,
-    resetPassword,
-    refreshTokenUser,
-    getUser
+  loginUser,
+  userRegistration,
+  verifyUser,
+  forgotPassword,
+  veriyUserForgotPassword,
+  resetPassword,
+  refreshTokenUser,
+  getUser,
 } from "../controller/auth.controller";
 import isAuthenticated from "@packages/middleware";
 

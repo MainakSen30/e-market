@@ -1,5 +1,5 @@
-import React from 'react';
-import { ShieldCheck, ShoppingBasket } from 'lucide-react';
+import React from "react";
+import { ShieldCheck, ShoppingBasket } from "lucide-react";
 
 interface AuthCardProps {
   title: string;
@@ -32,13 +32,13 @@ export const AuthCard: React.FC<AuthCardProps> = ({
 
       {/* Top Header Bar */}
       <div className="relative z-10 w-full max-w-6xl mx-auto flex items-center justify-between">
-        <div
-          className="group flex items-center gap-2.5 text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b] transition-transform duration-200 hover:scale-[1.02]"
-        >
+        <div className="group flex items-center gap-2.5 text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b] transition-transform duration-200 hover:scale-[1.02]">
           <span className="bg-[#2c3e6b] text-white p-2 rounded-xl flex items-center justify-center shadow-sm group-hover:bg-[#202f52] transition-colors">
             <ShoppingBasket className="w-5 h-5 text-white" />
           </span>
-          <span className="text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b]">Emarket</span>
+          <span className="text-2xl font-bold font-Poppins tracking-tight text-[#2c3e6b]">
+            Emarket
+          </span>
         </div>
 
         {/*{showBackToHome && (
@@ -86,7 +86,9 @@ export const AuthCard: React.FC<AuthCardProps> = ({
           <span>Secure 256-bit encrypted authentication</span>
         </div>
         <span className="hidden sm:inline text-slate-300">•</span>
-        <span>© {new Date().getFullYear()} Emarket Inc. All rights reserved.</span>
+        <span>
+          © {new Date().getFullYear()} Emarket Inc. All rights reserved.
+        </span>
       </div>
     </div>
   );

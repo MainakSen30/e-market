@@ -1,25 +1,25 @@
-const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
-const { join, resolve } = require('path');
+const { NxAppWebpackPlugin } = require("@nx/webpack/app-plugin");
+const { join, resolve } = require("path");
 
 module.exports = {
   output: {
-    path: join(__dirname, '../../dist/apps/auth-service'),
+    path: join(__dirname, "../../dist/apps/auth-service"),
   },
   resolve: {
     alias: {
-        "@packages": resolve(__dirname, "../../packages")
+      "@packages": resolve(__dirname, "../../packages"),
     },
-    extensions: [".ts", ".js"]
+    extensions: [".ts", ".js"],
   },
   plugins: [
     new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
-      main: './src/main.ts',
-      tsConfig: './tsconfig.app.json',
+      target: "node",
+      compiler: "tsc",
+      main: "./src/main.ts",
+      tsConfig: "./tsconfig.app.json",
       optimization: false,
-      outputHashing: 'none',
+      outputHashing: "none",
       generatePackageJson: true,
-    })
+    }),
   ],
 };

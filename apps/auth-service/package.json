@@ -1,39 +1,39 @@
 {
-    "name": "@./auth-service",
-    "version": "0.0.1",
-    "private": "true",
-    "scripts": {
-        "dev": "node src/main.tz"
-    },
-    "nx": {
-        "name": "auth-service",
-        "projectType": "application",
-        "sourceRoot": "auth-service/src",
-        "tragets": {
-            "serve": {
-                "executor": "@nx/js:node",
-                "defaultConfiguration": "development",
-                "dependsOn": [
-                    "build"
-                ],
-                "options": {
-                    "buildTarget": "auth-service:build",
-                    "runBuildTargetDependencies": "false"
-                },
-                "configurations": {
-                    "development": {
-                        "buildTarget": "auth-service:build:developmet"
-                    },
-                    "production": {
-                        "buildTarget": "auth-service:build:production"
-                    }
-                }
-            },
-            "test": {
-                "options": {
-                    "passWithNoTests": true
-                }
-            }
+  "name": "@./auth-service",
+  "version": "0.0.1",
+  "private": "true",
+  "scripts": {
+    "dev": "node src/main.tz"
+  },
+  "nx": {
+    "name": "auth-service",
+    "projectType": "application",
+    "sourceRoot": "auth-service/src",
+    "tragets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "auth-service:build",
+          "runBuildTargetDependencies": "false"
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "auth-service:build:developmet"
+          },
+          "production": {
+            "buildTarget": "auth-service:build:production"
+          }
         }
+      },
+      "test": {
+        "options": {
+          "passWithNoTests": true
+        }
+      }
     }
+  }
 }

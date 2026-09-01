@@ -1,14 +1,22 @@
 "use client";
-import React, { useRef, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { Eye, EyeOff, Lock, Mail, AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
-import AuthCard from '../../../shared/components/auth/auth-card';
-import AuthButton from '../../../shared/components/auth/auth-button';
+import React, { useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  AlertCircle,
+  ArrowLeft,
+  RefreshCw,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import AuthCard from "../../../shared/components/auth/auth-card";
+import AuthButton from "../../../shared/components/auth/auth-button";
 
 type EmailFormData = {
   email: string;
@@ -22,10 +30,10 @@ type ResetPasswordFormData = {
 const ForgotPassword = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [otp, setOtp] = useState(['', '', '', '']);
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const [canResend, setCanResend] = useState(false);
   const [timer, setTimer] = useState(60);
-  const [step, setStep] = useState<'email' | 'otp' | 'reset'>('email');
+  const [step, setStep] = useState<"email" | "otp" | "reset">("email");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -65,21 +73,21 @@ const ForgotPassword = () => {
     mutationFn: async ({ email }: { email: string }) => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URI}/api/forgot-password-user`,
-        { email }
+        { email },
       );
       return response.data;
     },
     onSuccess: (_, { email }) => {
       setUserEmail(email);
-      setStep('otp');
+      setStep("otp");
       setServerError(null);
       startResendTimer();
-      toast.success('Password reset code sent to your email.');
+      toast.success("Password reset code sent to your email.");
     },
     onError: (error: AxiosError) => {
       const errorMessage =
         (error.response?.data as { message?: string })?.message ||
-        'Unable to send reset code. Please check your email and try again.';
+        "Unable to send reset code. Please check your email and try again.";
       setServerError(errorMessage);
       toast.error(errorMessage);
     },
@@ -93,20 +101,20 @@ const ForgotPassword = () => {
         `${process.env.NEXT_PUBLIC_SERVER_URI}/api/verify-forgot-password-user`,
         {
           email: userEmail,
-          otp: otp.join(''),
-        }
+          otp: otp.join(""),
+        },
       );
       return response.data;
     },
     onSuccess: () => {
-      setStep('reset');
+      setStep("reset");
       setServerError(null);
-      toast.success('Code verified. You can now reset your password.');
+      toast.success("Code verified. You can now reset your password.");
     },
     onError: (error: AxiosError) => {
       const errorMessage =
         (error.response?.data as { message?: string })?.message ||
-        'Invalid or expired code. Please try again.';
+        "Invalid or expired code. Please try again.";
       setServerError(errorMessage);
       toast.error(errorMessage);
     },
@@ -121,19 +129,21 @@ const ForgotPassword = () => {
         {
           email: userEmail,
           newPassword: password,
-        }
+        },
       );
       return response.data;
     },
     onSuccess: () => {
       setServerError(null);
-      toast.success('Password reset successfully! Please login with your new password.');
-      router.push('/login');
+      toast.success(
+        "Password reset successfully! Please login with your new password.",
+      );
+      router.push("/login");
     },
     onError: (error: AxiosError) => {
       const errorMessage =
         (error.response?.data as { message?: string })?.message ||
-        'Unable to reset password. Please try again.';
+        "Unable to reset password. Please try again.";
       setServerError(errorMessage);
       toast.error(errorMessage);
     },
@@ -169,33 +179,33 @@ const ForgotPassword = () => {
 
   const handleOtpKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').trim();
+    const pastedData = e.clipboardData.getData("text").trim();
     if (/^\d{4}$/.test(pastedData)) {
-      const digits = pastedData.split('');
+      const digits = pastedData.split("");
       setOtp(digits);
       inputRefs.current[3]?.focus();
     }
   };
 
   const stepTitles = {
-    email: 'Forgot your password?',
-    otp: 'Enter verification code',
-    reset: 'Set new password',
+    email: "Forgot your password?",
+    otp: "Enter verification code",
+    reset: "Set new password",
   };
 
   const stepBreadcrumbs = {
-    email: 'Home • Forgot Password',
-    otp: 'Home • Forgot Password • Verification',
-    reset: 'Home • Forgot Password • New Password',
+    email: "Home • Forgot Password",
+    otp: "Home • Forgot Password • Verification",
+    reset: "Home • Forgot Password • New Password",
   };
 
   return (
@@ -203,9 +213,9 @@ const ForgotPassword = () => {
       title={stepTitles[step]}
       breadcrumb={stepBreadcrumbs[step]}
       subtitle={
-        step === 'email' ? (
+        step === "email" ? (
           <p>
-            Remembered your password?{' '}
+            Remembered your password?{" "}
             <Link
               href="/login"
               className="text-[#2c3e6b] font-semibold hover:underline underline-offset-4 transition-colors"
@@ -213,9 +223,9 @@ const ForgotPassword = () => {
               Sign in
             </Link>
           </p>
-        ) : step === 'otp' ? (
+        ) : step === "otp" ? (
           <p className="text-xs sm:text-sm text-slate-500">
-            Enter the 4-digit code sent to{' '}
+            Enter the 4-digit code sent to{" "}
             <span className="font-semibold text-slate-800">{userEmail}</span>
           </p>
         ) : (
@@ -230,24 +240,28 @@ const ForgotPassword = () => {
         <div className="flex items-center justify-center gap-2 mb-6">
           <div
             className={`w-8 h-1.5 rounded-full transition-colors duration-300 ${
-              step === 'email' ? 'bg-[#2c3e6b]' : 'bg-slate-200'
+              step === "email" ? "bg-[#2c3e6b]" : "bg-slate-200"
             }`}
           />
           <div
             className={`w-8 h-1.5 rounded-full transition-colors duration-300 ${
-              step === 'otp' ? 'bg-[#2c3e6b]' : 'bg-slate-200'
+              step === "otp" ? "bg-[#2c3e6b]" : "bg-slate-200"
             }`}
           />
           <div
             className={`w-8 h-1.5 rounded-full transition-colors duration-300 ${
-              step === 'reset' ? 'bg-[#2c3e6b]' : 'bg-slate-200'
+              step === "reset" ? "bg-[#2c3e6b]" : "bg-slate-200"
             }`}
           />
         </div>
 
         {/* Step 1: Email Form */}
-        {step === 'email' && (
-          <form onSubmit={handleSubmitEmail(onSubmitEmail)} className="space-y-4" noValidate>
+        {step === "email" && (
+          <form
+            onSubmit={handleSubmitEmail(onSubmitEmail)}
+            className="space-y-4"
+            noValidate
+          >
             <div className="space-y-1.5 text-left">
               <label
                 htmlFor="forgot-email"
@@ -266,14 +280,15 @@ const ForgotPassword = () => {
                   placeholder="name@example.com"
                   className={`w-full h-11 rounded-xl border pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
                     emailErrors.email
-                      ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10"
                   }`}
-                  {...registerEmail('email', {
-                    required: 'Email is required',
+                  {...registerEmail("email", {
+                    required: "Email is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                      message: 'Please enter a valid email address',
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      message: "Please enter a valid email address",
                     },
                   })}
                 />
@@ -318,7 +333,7 @@ const ForgotPassword = () => {
         )}
 
         {/* Step 2: OTP Form */}
-        {step === 'otp' && (
+        {step === "otp" && (
           <div className="space-y-6">
             <div className="flex justify-center gap-3 sm:gap-4 my-2">
               {otp.map((digit, index) => (
@@ -354,7 +369,7 @@ const ForgotPassword = () => {
               onClick={() => verifyOtpMutation.mutate()}
               isLoading={verifyOtpMutation.isPending}
               loadingText="Verifying Code..."
-              disabled={otp.join('').length !== 4}
+              disabled={otp.join("").length !== 4}
             >
               Verify Code
             </AuthButton>
@@ -362,7 +377,7 @@ const ForgotPassword = () => {
             {/* Resend & Back Controls */}
             <div className="flex flex-col items-center gap-3 pt-2">
               <p className="text-xs sm:text-sm text-slate-500">
-                Didn&apos;t receive the code?{' '}
+                Didn&apos;t receive the code?{" "}
                 {canResend ? (
                   <button
                     type="button"
@@ -375,7 +390,10 @@ const ForgotPassword = () => {
                   </button>
                 ) : (
                   <span className="font-medium text-slate-400">
-                    Resend in <span className="text-[#2c3e6b] font-semibold">{timer}s</span>
+                    Resend in{" "}
+                    <span className="text-[#2c3e6b] font-semibold">
+                      {timer}s
+                    </span>
                   </span>
                 )}
               </p>
@@ -383,7 +401,7 @@ const ForgotPassword = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setStep('email');
+                  setStep("email");
                   setServerError(null);
                 }}
                 className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors pt-2"
@@ -396,8 +414,12 @@ const ForgotPassword = () => {
         )}
 
         {/* Step 3: New Password Form */}
-        {step === 'reset' && (
-          <form onSubmit={handleSubmitReset(onSubmitReset)} className="space-y-4" noValidate>
+        {step === "reset" && (
+          <form
+            onSubmit={handleSubmitReset(onSubmitReset)}
+            className="space-y-4"
+            noValidate
+          >
             {/* New Password */}
             <div className="space-y-1.5 text-left">
               <label
@@ -412,19 +434,19 @@ const ForgotPassword = () => {
                 </div>
                 <input
                   id="new-password"
-                  type={passwordVisible ? 'text' : 'password'}
+                  type={passwordVisible ? "text" : "password"}
                   autoComplete="new-password"
                   placeholder="••••••••"
                   className={`w-full h-11 rounded-xl border pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
                     resetErrors.password
-                      ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10"
                   }`}
-                  {...registerReset('password', {
-                    required: 'New password is required',
+                  {...registerReset("password", {
+                    required: "New password is required",
                     minLength: {
                       value: 6,
-                      message: 'Password must be at least 6 characters',
+                      message: "Password must be at least 6 characters",
                     },
                   })}
                 />
@@ -432,7 +454,9 @@ const ForgotPassword = () => {
                   type="button"
                   onClick={() => setPasswordVisible(!passwordVisible)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
-                  aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+                  aria-label={
+                    passwordVisible ? "Hide password" : "Show password"
+                  }
                 >
                   {passwordVisible ? (
                     <EyeOff className="h-4 w-4" />
@@ -463,25 +487,30 @@ const ForgotPassword = () => {
                 </div>
                 <input
                   id="confirm-password"
-                  type={confirmPasswordVisible ? 'text' : 'password'}
+                  type={confirmPasswordVisible ? "text" : "password"}
                   autoComplete="new-password"
                   placeholder="••••••••"
                   className={`w-full h-11 rounded-xl border pl-10 pr-11 text-sm text-slate-900 placeholder:text-slate-400 bg-slate-50/50 transition-all duration-200 outline-none focus:bg-white focus:ring-2 ${
                     resetErrors.confirmPassword
-                      ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
-                      : 'border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10'
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-slate-200 focus:border-[#2c3e6b] focus:ring-[#2c3e6b]/10"
                   }`}
-                  {...registerReset('confirmPassword', {
-                    required: 'Please confirm your new password',
+                  {...registerReset("confirmPassword", {
+                    required: "Please confirm your new password",
                     validate: (value) =>
-                      value === watchReset('password') || 'Passwords do not match',
+                      value === watchReset("password") ||
+                      "Passwords do not match",
                   })}
                 />
                 <button
                   type="button"
-                  onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                  onClick={() =>
+                    setConfirmPasswordVisible(!confirmPasswordVisible)
+                  }
                   className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
-                  aria-label={confirmPasswordVisible ? 'Hide password' : 'Show password'}
+                  aria-label={
+                    confirmPasswordVisible ? "Hide password" : "Show password"
+                  }
                 >
                   {confirmPasswordVisible ? (
                     <EyeOff className="h-4 w-4" />

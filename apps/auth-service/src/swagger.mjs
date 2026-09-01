@@ -1,21 +1,17 @@
 import swaggerAutogen from "swagger-autogen";
 
 const doc = {
-    info: {
-        title: "Auth service API",
-        description: "Automatically generated auth service swagger docs",
-        version: "1.0.0"
-    },
-    host: "localhost:6001",
-    basePath: "/api",
-    schemes: [
-        "http"
-    ],
-}
+  info: {
+    title: "Auth service API",
+    description: "Automatically generated auth service swagger docs",
+    version: "1.0.0",
+  },
+  host: "localhost:6001",
+  basePath: "/api",
+  schemes: ["http"],
+};
 
 const outputFile = "./swagger-output.json";
-const endpointFiles = [
-    "./routes/auth.router.ts"
-];
+const endpointFiles = ["./routes/auth.router.ts"];
 
 swaggerAutogen()(outputFile, endpointFiles, doc);
