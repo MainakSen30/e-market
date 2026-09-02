@@ -8,11 +8,7 @@ import { useForm } from "react-hook-form";
 import axios, { AxiosError } from "axios";
 
 //formdata
-type SignupFormData = {
-  name: string;
-  email: string;
-  password: string;
-};
+
 
 const Signup = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -31,7 +27,7 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormData>();
+  } = useForm();
 
   //timer function
   const startResendTimer = () => {
@@ -84,7 +80,7 @@ const Signup = () => {
   });
 
   //form submit function
-  const onSubmit = (data: SignupFormData) => {
+  const onSubmit = (data: any) => {
     signupMutation.mutate(data);
   };
 
@@ -146,7 +142,9 @@ const Signup = () => {
             {!showOtp ? (
               <form onSubmit={handleSubmit(onSubmit)}>
                 {/* header */}
-                <h3 className="text-3xl font-semibold text-center mb-4">Create Account</h3>
+                <h3 className="text-3xl font-semibold text-center mb-4">
+                  Create Account
+                </h3>
                 {/* name textbox */}
                 <label className="block text-gray-700 mb-1">Name</label>
                 <input
@@ -180,6 +178,33 @@ const Signup = () => {
                 {errors.email && (
                   <p className="text-red-600 text-sm">
                     {String(errors.email.message)}
+                  </p>
+                )}
+
+                {/* phone number */}
+                <label className="block text-gray-700 mb-1">Phone Number</label>
+                <input
+                  placeholder="+1234567890"
+                  className="w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^\+[1-9]\d{1,14}$/,
+                      message: "Invalid phone number format (e.g. +1234567890)",
+                    },
+                    minLength: {
+                      value: 10,
+                      message: "Phone number must be at least 10 digits",
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "Phone number must be at most 15 digits",
+                    },
+                  })}
+                />
+                {errors.phoneNumber && (
+                  <p className="text-red-600 text-sm">
+                    {String(errors.phoneNumber.message)}
                   </p>
                 )}
 
