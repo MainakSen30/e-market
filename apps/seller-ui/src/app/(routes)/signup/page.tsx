@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios, { AxiosError } from "axios";
+import { countries } from "apps/seller-ui/src/utils/countries";
 
 //formdata
 
@@ -182,7 +183,7 @@ const Signup = () => {
                 )}
 
                 {/* phone number */}
-                <label className="block text-gray-700 mb-1">Phone Number</label>
+                <label className="block text-gray-700 mt-4">Phone Number</label>
                 <input
                   placeholder="+1234567890"
                   className="w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2"
@@ -205,6 +206,28 @@ const Signup = () => {
                 {errors.phoneNumber && (
                   <p className="text-red-600 text-sm">
                     {String(errors.phoneNumber.message)}
+                  </p>
+                )}
+
+                {/* countries */}
+                <label className="block text-gray-700 mb-1">Country</label>
+                <select
+                  className="w-full p-2 border border-gray-300 outline-0 rounded-lg"
+                  {...register("country", {
+                    required: "Country is required"
+                  })}
+                >
+                  <option value="">Select your country</option>
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.country && (
+                  <p className="text-red-600 text-sm">
+                    {String(errors.country.message)}
                   </p>
                 )}
 
