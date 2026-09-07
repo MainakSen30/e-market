@@ -272,9 +272,14 @@ const Signup = () => {
 
                 {signupMutation.isError && signupMutation.error instanceof AxiosError && (
                   <p className="text-red-600 text-sm">
-                    {signupMutation.error.response?.data?.message || signupMutation.error.message}
+                    {signupMutation.error.response?.data?.message || signupMutation.error.message || "Something went wrong. Please try again"}
                   </p>
                 )}
+
+                {/* Already have an account -> Login */}
+                <p className="text-center text-sm mt-4">
+                  Already have an account? <Link href="/login" className="text-blue-600 cursor-pointer">Login</Link>
+                </p>
               </form>
             ) : (
               <div>
@@ -319,13 +324,11 @@ const Signup = () => {
                     `Resend OTP in ${timer}s`
                   )}
                 </p>
-                {verifyOtpMutation?.isError &&
-                  verifyOtpMutation.error instanceof AxiosError && (
-                    <p className="text-red-600 text-sm mt-2">
-                      {verifyOtpMutation.error.response?.data?.message ||
-                        verifyOtpMutation.error.message}
-                    </p>
-                  )}
+                {verifyOtpMutation?.isError && verifyOtpMutation.error instanceof AxiosError && (
+                  <p className="text-red-600 text-sm mt-2">
+                    {verifyOtpMutation.error.response?.data?.message || verifyOtpMutation.error.message || "Something went wrong. Please try again later."}
+                  </p>
+                )}
               </div>
             )}
           </>
