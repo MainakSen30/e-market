@@ -82,7 +82,7 @@ export const verifyUser = async (
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Persist the new user now that the email is verified
-    await prisma.users.create({
+    const user = await prisma.users.create({
       data: {
         name,
         email,
@@ -91,6 +91,7 @@ export const verifyUser = async (
     });
 
     res.status(200).json({
+      user,
       success: true,
       message: "User registered successfully",
     });
@@ -329,5 +330,60 @@ export const sellerRegistration = async (
     });
   } catch (error) {
     next(error);
+  }
+}
+
+// Completes the registration flow by verifying the OTP sent during userRegistration.
+// On successful OTP verification, hashes the password and persists the new user to the DB.
+// This is the flow for the seller
+export const verifySeller = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { name, email, password, otp, phoneNumber, country } = req.body;
+
+    //check if one or more of them is missing
+    if (!name || !email || !password || !otp || !phoneNumber || !country) {
+      return next(new ValidationError("All the fields are required"));
+    }
+
+    //check existing seller
+    const existingSeller = await prisma.sellers.findUnique({
+      where: { email }
+    });
+
+    //if seller exists, throw an error
+    if(existingSeller) {
+      return next(new ValidationError("Seller is already registered, Login instead!"));
+    }
+
+    // Validate the OTP — throws if invalid, expired, or too many failed attempts
+    await verifyOtp(email, otp);
+
+    // Hash the password before saving into the database
+    const hashedSellerPassword = await bcrypt.hash(password, 10);
+
+    // Persist the new seller now that the email has been verified
+    const seller = await prisma.sellers.create({
+      data: {
+        name,
+        email,
+        password: hashedSellerPassword,
+        country,
+        phone_number: phoneNumber
+      }
+    });
+
+    res.status(200).json({
+      seller,
+      success: true,
+      message: "Seller registered successfully",
+    });
+
+
+  } catch (error) {
+    next(error)
   }
 }
