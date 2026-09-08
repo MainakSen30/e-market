@@ -294,3 +294,40 @@ export const resetPassword = async (
     return next(error);
   }
 };
+
+// Initiates the registration flow for a new seller.
+// Validates the request body, ensures the email isn't already taken,
+// enforces OTP restrictions, and sends a verification OTP to the seller's email.
+// The seller is NOT persisted to the DB at this stage.
+export const sellerRegistration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    //validate data for the seller received from the body
+    validateRegistrationData(req.body, "seller");
+    const { name, email } = req.body;
+
+    //check existing seller
+    const existingSeller = await prisma.sellers.findUnique({
+      where: { email },
+    });
+
+    //if seller exists, throw a validation error
+    if(existingSeller) {
+      throw new ValidationError("Seller already exists with this email!");
+    }
+    await checkOtpRestrictions(email);
+
+    //send Otp after checking otp restrictions
+    await sendOtp(name, email, "seller-activation-email");
+
+    res.status(200).json({
+      success: true,
+      message: "OTP sent to your email. Please verify to register.",
+    });
+  } catch (error) {
+    next(error);
+  }
+}

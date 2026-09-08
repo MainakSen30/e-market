@@ -16,6 +16,12 @@ export const EMAIL_TEMPLATES: Record<string, EmailTemplateConfig> = {
   "user-forgot-password-email": {
     subject: "Reset your password - E-market",
   },
+  "seller-activation-email": {
+    subject: "Verify your seller account - E-market",
+  },
+  "seller-forgot-password-email": {
+    subject: "Reset your seller password - E-market",
+  },
 };
 
 export const resolveEmailSubject = (
