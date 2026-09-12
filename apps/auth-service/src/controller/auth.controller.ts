@@ -387,3 +387,53 @@ export const verifySeller = async (
     next(error)
   }
 }
+
+//creaye a new shop
+// we will have to receive a lot of data from the frontend form and add it into the db
+export const createShop = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      shopName,
+      shopBio,
+      shopAddress,
+      openingHours,
+      website,
+      category,
+      sellerId
+    } = req.body;
+
+    //check if any data is missing
+    if(!shopName || !shopAddress || !category || !sellerId || !openingHours || !shopBio) {
+      return next(new ValidationError("All the fields are required"));
+    }
+
+    const shopData: any = {
+      name: shopName,
+      bio: shopBio,
+      address: shopAddress,
+      opening_hours: openingHours,
+      category: category,
+      sellerId: sellerId,
+    }
+
+    if(website && website.trim() !== "") {
+      shopData.website = website;
+    }
+
+    const shop = await prisma.shops.create({
+      data: shopData
+    });
+
+    res.status(201).json({
+      shop,
+      success: true,
+      message: "Shop created successfully!"
+    });
+  } catch (error) {
+    next(error);
+  }
+}
