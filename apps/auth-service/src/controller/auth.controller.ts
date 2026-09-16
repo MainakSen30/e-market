@@ -342,10 +342,11 @@ export const verifySeller = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, password, otp, phoneNumber, country } = req.body;
+    const { name, email, password, otp, country } = req.body;
+    const phone_number = req.body.phone_number || req.body.phoneNumber;
 
     //check if one or more of them is missing
-    if (!name || !email || !password || !otp || !phoneNumber || !country) {
+    if (!name || !email || !password || !otp || !phone_number || !country) {
       return next(new ValidationError("All the fields are required"));
     }
 
@@ -372,7 +373,7 @@ export const verifySeller = async (
         email,
         password: hashedSellerPassword,
         country,
-        phone_number: phoneNumber
+        phone_number
       }
     });
 
@@ -388,7 +389,7 @@ export const verifySeller = async (
   }
 }
 
-//creaye a new shop
+//create a new shop
 // we will have to receive a lot of data from the frontend form and add it into the db
 export const createShop = async (
   req: Request,
@@ -437,3 +438,5 @@ export const createShop = async (
     next(error);
   }
 }
+
+//create a stripe connect account link

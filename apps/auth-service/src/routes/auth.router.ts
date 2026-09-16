@@ -8,6 +8,9 @@ import {
   resetPassword,
   refreshTokenUser,
   getUser,
+  sellerRegistration,
+  verifySeller,
+  createShop,
 } from "../controller/auth.controller";
 import isAuthenticated from "@packages/middleware";
 
@@ -26,5 +29,10 @@ router.get("/logged-in-user", isAuthenticated, getUser);
 router.post("/forgot-password-user", forgotPassword);
 router.post("/verify-forgot-password-user", veriyUserForgotPassword);
 router.post("/reset-password-user", resetPassword);
+
+// seller routes
+router.post("/seller-registration", sellerRegistration);
+router.post("/verify-seller", verifySeller);
+router.post("/create-shop", createShop);
 
 export default router;

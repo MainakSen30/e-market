@@ -7,18 +7,27 @@ import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios, { AxiosError } from "axios";
 import { countries } from "apps/seller-ui/src/utils/countries";
+import CreateShop from "apps/seller-ui/src/shared/components/auth/create-shop";
 
 //formdata
+type SignupFormData = {
+  name: string;
+  email: string;
+  phone_number: string;
+  country: string;
+  password: string;
+}
 
 
 const Signup = () => {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(2);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [canResend, setCanResend] = useState(false);
   const [timer, setTimer] = useState(60);
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [userData, setUserData] = useState<SignupFormData | null>(null);
+  const [sellerData, setSellerData] = useState<SignupFormData | null>(null);
+  const [sellerId, setSellerId] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const router = useRouter();
@@ -48,13 +57,13 @@ const Signup = () => {
   const signupMutation = useMutation({
     mutationFn: async (data: SignupFormData) => {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/user-registration`,
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/seller-registration`,
         data,
       );
       return response.data;
     },
     onSuccess: (_, formData) => {
-      setUserData(formData);
+      setSellerData(formData);
       setShowOtp(true);
       setCanResend(false);
       setTimer(60);
@@ -65,18 +74,19 @@ const Signup = () => {
   //verify OTP mutation
   const verifyOtpMutation = useMutation({
     mutationFn: async () => {
-      if (!userData) return;
+      if (!sellerData) return;
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/verify-user`,
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/verify-seller`,
         {
-          ...userData,
+          ...sellerData,
           otp: otp.join(""),
         },
       );
       return response.data;
     },
-    onSuccess: () => {
-      router.push("/login");
+    onSuccess: (data) => {
+      setSellerId(data?.seller?.id);
+      setActiveStep(2)
     },
   });
 
@@ -108,8 +118,8 @@ const Signup = () => {
 
   //resend OTP handler function
   const resendOtp = () => {
-    if (userData) {
-      signupMutation.mutate(userData);
+    if (sellerData) {
+      signupMutation.mutate(sellerData);
     }
   };
 
@@ -138,6 +148,7 @@ const Signup = () => {
 
       {/* steps */}
       <div className="md:w-[480px] p-8 bg-white shadow rounded-2xl">
+        {/* step 1 */}
         {activeStep === 1 && (
           <>
             {!showOtp ? (
@@ -187,7 +198,7 @@ const Signup = () => {
                 <input
                   placeholder="+1234567890"
                   className="w-full py-2 px-4 border border-gray-300 outline-0 rounded mb-2"
-                  {...register("phoneNumber", {
+                  {...register("phone_number", {
                     required: "Phone number is required",
                     pattern: {
                       value: /^\+[1-9]\d{1,14}$/,
@@ -203,9 +214,9 @@ const Signup = () => {
                     },
                   })}
                 />
-                {errors.phoneNumber && (
+                {errors.phone_number && (
                   <p className="text-red-600 text-sm">
-                    {String(errors.phoneNumber.message)}
+                    {String(errors.phone_number.message)}
                   </p>
                 )}
 
@@ -332,6 +343,11 @@ const Signup = () => {
               </div>
             )}
           </>
+        )}
+
+        {/* step 2 */}
+        {activeStep === 2 && (
+          <CreateShop sellerId={sellerId} setActiveStep={setActiveStep} />
         )}
       </div>
     </div>
