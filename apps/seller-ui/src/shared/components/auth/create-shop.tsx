@@ -94,6 +94,39 @@ const CreateShop = ({ sellerId, setActiveStep }: CreateShopProps) => {
       )}
 
       {/* opening hours */}
+      <label className="block text-gray-700 mb-1 mt-3">Opening Hours *</label>
+      <input
+        type="text"
+        placeholder="eg. Mon - Fri 9AM - 6PM"
+        className="w-full px-3 py-2 border border-gray-300 rounded-2xl mt-1"
+        {...register("opening_hours", {
+          required: "Opening hours is required",
+        })}
+      />
+      {errors.opening_hours && (
+        <p className="text-red-600 text-sm">{String(errors.opening_hours.message)}</p>
+      )}
+
+      {/* website */}
+      <label className="block text-gray-700 mb-1 mt-3">Website (Optional)</label>
+      <input
+        type="url"
+        placeholder="eg. www.example.com"
+        className="w-full px-3 py-2 border border-gray-300 rounded-2xl mt-1"
+        {...register("website", {
+          required: false,
+          pattern: {
+            value: /^https?:\/\//,
+            message: "Please enter a valid URL",
+          },
+        })}
+      />
+      {errors.website && (
+        <p className="text-red-600 text-sm">{String(errors.website.message)}</p>
+      )}
+
+      {/* categories */}
+      <label className="block text-gray-700 mb-1 mt-3">Category *</label>
       
     </form>
   </div>
