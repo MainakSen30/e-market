@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { shopCategories } from "apps/seller-ui/src/utils/categories";
 import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -127,7 +128,19 @@ const CreateShop = ({ sellerId, setActiveStep }: CreateShopProps) => {
 
       {/* categories */}
       <label className="block text-gray-700 mb-1 mt-3">Category *</label>
-      
+      <select
+        className="w-full px-3 py-2 border border-gray-300 rounded-2xl mt-1"
+        {...register("category", {
+          required: "Category is required"
+        })}
+      >
+        <option>Select a category</option>
+          {shopCategories.map((category) => (
+            <option key={category.value} value={category.value}>
+              {category.label}
+            </option>
+          ))}
+      </select>
     </form>
   </div>
 };
