@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { shopCategories } from "apps/seller-ui/src/utils/categories";
 import axios from "axios";
+import { ArrowRight } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -141,6 +142,11 @@ const CreateShop = ({ sellerId, setActiveStep }: CreateShopProps) => {
             </option>
           ))}
       </select>
+
+      {/* submit button */}
+      <button type="submit" className="w-full text-lg bg-[#2c3e6b] text-white py-2 rounded-lg mt-4 flex items-center justify-center">
+        {createShopMutation.isPending ? "Creating shop..." : <>Create Shop <ArrowRight size={18} className="ml-2"/></>}
+      </button>
     </form>
   </div>
 };

@@ -20,7 +20,7 @@ type SignupFormData = {
 
 
 const Signup = () => {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(3);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [canResend, setCanResend] = useState(false);
@@ -30,7 +30,7 @@ const Signup = () => {
   const [sellerId, setSellerId] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const router = useRouter();
+  //const router = useRouter();
 
   //react hook form
   const {
@@ -348,6 +348,20 @@ const Signup = () => {
         {/* step 2 */}
         {activeStep === 2 && (
           <CreateShop sellerId={sellerId} setActiveStep={setActiveStep} />
+        )}
+
+        {/* step 3 */}
+        {activeStep === 3 && (
+          <div className="text-center">
+            <h3 className="text-2xl font-semibold">Withdraw Method</h3>
+            <br />
+            <button
+              className="w-full m-auto flex items-center justify-center gap-3 text-lg bg-[#2c3e6b] text-white py-2 rounded-lg"
+              onClick={connectStripe}
+            >
+              Connect Stripe
+            </button>
+          </div>
         )}
       </div>
     </div>
