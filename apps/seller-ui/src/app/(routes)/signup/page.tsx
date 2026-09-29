@@ -2,12 +2,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios, { AxiosError } from "axios";
 import { countries } from "apps/seller-ui/src/utils/countries";
 import CreateShop from "apps/seller-ui/src/shared/components/auth/create-shop";
+import StripeLogo from "apps/seller-ui/src/shared/components/svgs/stripe-logo";
 
 //formdata
 type SignupFormData = {
@@ -122,6 +123,22 @@ const Signup = () => {
       signupMutation.mutate(sellerData);
     }
   };
+
+  //connect stripe function
+  const connectStripe = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/create-stripe-link`,
+        { sellerId: sellerId },
+      );
+
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="w-full flex flex-col items-center pt-10 min-h-screen">
@@ -359,7 +376,7 @@ const Signup = () => {
               className="w-full m-auto flex items-center justify-center gap-3 text-lg bg-[#2c3e6b] text-white py-2 rounded-lg"
               onClick={connectStripe}
             >
-              Connect Stripe
+              Connect Stripe <StripeLogo />
             </button>
           </div>
         )}

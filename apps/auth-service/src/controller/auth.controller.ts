@@ -12,6 +12,11 @@ import { AuthError, ValidationError } from "@packages/error-handler";
 import bcrypt from "bcryptjs";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { setCookie } from "../utils/cookies/setCookie";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2026-08-26.dahlia"
+})
 
 // Initiates the registration flow for a new user.
 // Validates the request body, ensures the email isn't already taken,
@@ -144,8 +149,8 @@ export const loginUser = async (
     );
 
     // Store both tokens in secure httpOnly cookies
-    setCookie(res, "refresh_token", refreshTokenAuth);
-    setCookie(res, "access_token", accessTokenAuth);
+    setCookie(res, "user-refresh-token", refreshTokenAuth);
+    setCookie(res, "user-access-token", accessTokenAuth);
 
     res.status(200).json({
       message: "Login successfully done.",
@@ -440,3 +445,129 @@ export const createShop = async (
 }
 
 //create a stripe connect account link
+export const createStripeConnectLink = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { sellerId } = req.body;
+
+    if (!sellerId) {
+      return next(new ValidationError("Seller ID is required"));
+    }
+
+    const seller = await prisma.sellers.findUnique({
+      where: { id: sellerId }
+    });
+
+    if (!seller) {
+      return next(new ValidationError("Seller not found"));
+    }
+
+    //create stripe express account
+    const account = await stripe.accounts.create({
+      type: "express",
+      email: seller?.email,
+      country: "IN",
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true }
+      }
+    });
+
+    await prisma.sellers.update({
+      where: { id: sellerId },
+      data: {
+        stripeId: account.id
+      }
+    });
+
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: "http://localhost:3000/success",
+      return_url: "http://localhost:3000/success",
+      type: "account_onboarding"
+    });
+
+    res.json({
+      url: accountLink.url
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export const loginSeller = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new ValidationError("All the fields are required"));
+    }
+
+    const seller = await prisma.sellers.findUnique({
+      where: { email }
+    });
+
+    if (!seller) {
+      return next(new ValidationError("Seller not found"));
+    }
+
+    const isMatchingPassword = await bcrypt.compare(password, seller.password!);
+    if(!isMatchingPassword) {
+      return next(new ValidationError("Invalid Email or Password"));
+    }
+
+    // Sign a short-lived access token and a long-lived refresh token
+    const accessTokenAuth = jwt.sign(
+      { id: seller.id, role: "seller" },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "15m" },
+    );
+    const refreshTokenAuth = jwt.sign(
+      { id: seller.id, role: "seller" },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "7d" },
+    );
+
+    // Store both tokens in secure httpOnly cookies
+    setCookie(res, "seller-refresh-token", refreshTokenAuth);
+    setCookie(res, "seller-access-token", accessTokenAuth);
+
+    res.status(200).json({
+      message: "Login successfully done.",
+      seller: {
+        id: seller.id,
+        email: seller.email,
+        name: seller.name,
+      },
+    });
+
+
+  } catch (error) {
+    return next(error);
+  }
+}
+
+//get logged in seller
+export const getLoggedInSeller = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const seller = req.seller;
+    res.status(201).json({
+      success: true,
+      seller,
+    })
+  } catch (error) {
+    return next(error);
+  }
+}
+
