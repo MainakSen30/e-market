@@ -3,7 +3,7 @@ import prisma from "@packages/libs/prisma";
 import { NextFunction, Response } from "express";
 import jwt from "jsonwebtoken";
 
-export const isAuthenticated = async (
+const isAuthenticated = async (
   req: any,
   res: Response,
   next: NextFunction,
