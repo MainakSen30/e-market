@@ -382,6 +382,21 @@ export const verifySeller = async (
       }
     });
 
+    // Sign tokens and set cookies so seller is authenticated
+    const accessTokenAuth = jwt.sign(
+      { id: seller.id, role: "seller" },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "15m" },
+    );
+    const refreshTokenAuth = jwt.sign(
+      { id: seller.id, role: "seller" },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "7d" },
+    );
+
+    setCookie(res, "seller-refresh-token", refreshTokenAuth);
+    setCookie(res, "seller-access-token", accessTokenAuth);
+
     res.status(200).json({
       seller,
       success: true,
@@ -402,15 +417,13 @@ export const createShop = async (
   next: NextFunction
 ) => {
   try {
-    const {
-      shopName,
-      shopBio,
-      shopAddress,
-      openingHours,
-      website,
-      category,
-      sellerId
-    } = req.body;
+    const shopName = req.body.shopName || req.body.name;
+    const shopBio = req.body.shopBio || req.body.bio;
+    const shopAddress = req.body.shopAddress || req.body.address;
+    const openingHours = req.body.openingHours || req.body.opening_hours;
+    const category = req.body.category;
+    const website = req.body.website;
+    const sellerId = req.body.sellerId || req.seller?.id;
 
     //check if any data is missing
     if(!shopName || !shopAddress || !category || !sellerId || !openingHours || !shopBio) {
@@ -511,7 +524,10 @@ export const loginSeller = async (
     }
 
     const seller = await prisma.sellers.findUnique({
-      where: { email }
+      where: { email },
+      include: {
+        shop: true,
+      },
     });
 
     if (!seller) {
@@ -545,6 +561,8 @@ export const loginSeller = async (
         id: seller.id,
         email: seller.email,
         name: seller.name,
+        shop: seller.shop,
+        stripeId: seller.stripeId,
       },
     });
 

@@ -51,10 +51,11 @@ const CreateShop: React.FC<CreateShopProps> = ({
   };
 
   const createShopMutation = useMutation({
-    mutationFn: async (data: CreateShopFormData & { sellerId: string }) => {
+    mutationFn: async (payload: any) => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URI}/api/create-shop`,
-        data,
+        payload,
+        { withCredentials: true },
       );
       return response.data;
     },
@@ -72,9 +73,42 @@ const CreateShop: React.FC<CreateShopProps> = ({
     },
   });
 
-  const onSubmit = (data: CreateShopFormData) => {
+  const onSubmit = async (data: CreateShopFormData) => {
     setServerError(null);
-    createShopMutation.mutate({ ...data, sellerId });
+    let resolvedSellerId = sellerId;
+    if (!resolvedSellerId) {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URI}/api/logged-in-seller`,
+          { withCredentials: true },
+        );
+        resolvedSellerId = res.data?.seller?.id;
+      } catch {
+        // ignore
+      }
+    }
+
+    if (!resolvedSellerId) {
+      setServerError("Seller ID not found. Please log in again.");
+      toast.error("Seller ID not found. Please log in again.");
+      return;
+    }
+
+    const payload = {
+      shopName: data.name,
+      shopBio: data.bio,
+      shopAddress: data.address,
+      openingHours: data.opening_hours,
+      website: data.website,
+      category: data.category,
+      sellerId: resolvedSellerId,
+      name: data.name,
+      bio: data.bio,
+      address: data.address,
+      opening_hours: data.opening_hours,
+    };
+
+    createShopMutation.mutate(payload);
   };
 
   return (

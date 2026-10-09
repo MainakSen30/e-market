@@ -1,6 +1,6 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import React, { Suspense, useEffect, useRef, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import {
   Eye,
@@ -19,8 +19,10 @@ import {
   CheckCircle2,
   DollarSign,
   Building2,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { countries } from "../../../utils/countries";
@@ -38,7 +40,10 @@ type SignupFormData = {
   password: string;
 };
 
-const Signup = () => {
+const SignupContent = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [activeStep, setActiveStep] = useState(1);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
@@ -50,6 +55,60 @@ const Signup = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isConnectingStripe, setIsConnectingStripe] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Check query params for step & sellerId
+  useEffect(() => {
+    const stepParam = searchParams.get("step");
+    if (stepParam === "2") {
+      setActiveStep(2);
+    } else if (stepParam === "3") {
+      setActiveStep(3);
+    }
+
+    const sellerIdParam = searchParams.get("sellerId");
+    if (sellerIdParam) {
+      setSellerId(sellerIdParam);
+    }
+  }, [searchParams]);
+
+  // Check if seller is already authenticated to resume exactly where they left off
+  const { data: loggedInSellerData, isLoading: isCheckingAuth } = useQuery({
+    queryKey: ["logged-in-seller"],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URI}/api/logged-in-seller`,
+          { withCredentials: true },
+        );
+        return response.data;
+      } catch {
+        return null;
+      }
+    },
+    retry: false,
+    staleTime: 1000 * 60,
+  });
+
+  // Sync state with logged-in seller progress
+  useEffect(() => {
+    if (loggedInSellerData?.seller) {
+      const seller = loggedInSellerData.seller;
+      setSellerId(seller.id);
+
+      // 1. If seller has not created a shop yet, greet them directly with shop setup (Step 2)
+      if (!seller.shop) {
+        setActiveStep(2);
+      }
+      // 2. If shop is created but stripe payouts not connected, show Step 3
+      else if (!seller.stripeId) {
+        setActiveStep(3);
+      }
+      // 3. If all steps completed, redirect to main application
+      else {
+        router.push("/");
+      }
+    }
+  }, [loggedInSellerData, router]);
 
   const {
     register,
@@ -108,6 +167,7 @@ const Signup = () => {
           ...sellerData,
           otp: otp.join(""),
         },
+        { withCredentials: true },
       );
       return response.data;
     },
@@ -174,9 +234,24 @@ const Signup = () => {
   const connectStripe = async () => {
     try {
       setIsConnectingStripe(true);
+      let targetSellerId = sellerId;
+      if (!targetSellerId) {
+        try {
+          const res = await axios.get(
+            `${process.env.NEXT_PUBLIC_SERVER_URI}/api/logged-in-seller`,
+            { withCredentials: true },
+          );
+          targetSellerId = res.data?.seller?.id;
+          if (targetSellerId) setSellerId(targetSellerId);
+        } catch {
+          // ignore
+        }
+      }
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URI}/api/create-stripe-link`,
-        { sellerId: sellerId },
+        { sellerId: targetSellerId },
+        { withCredentials: true },
       );
 
       if (response.data?.url) {
@@ -191,6 +266,24 @@ const Signup = () => {
       setIsConnectingStripe(false);
     }
   };
+
+  // Show a sleek loading state while checking existing session if not on a step param
+  if (isCheckingAuth && !searchParams.get("step")) {
+    return (
+      <AuthCard
+        title="Checking Account"
+        breadcrumb="Home • Seller Panel • Resuming Session"
+        stepper={<AuthStepper activeStep={1} />}
+      >
+        <div className="flex flex-col items-center justify-center py-10 space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#2c3e6b]" />
+          <p className="text-sm font-medium text-slate-600">
+            Resuming your onboarding session...
+          </p>
+        </div>
+      </AuthCard>
+    );
+  }
 
   // Dynamic header titles based on step
   const getStepTitle = () => {
@@ -730,6 +823,20 @@ const Signup = () => {
         )}
       </div>
     </AuthCard>
+  );
+};
+
+const Signup = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          <Loader2 className="w-8 h-8 animate-spin text-[#2c3e6b]" />
+        </div>
+      }
+    >
+      <SignupContent />
+    </Suspense>
   );
 };
 

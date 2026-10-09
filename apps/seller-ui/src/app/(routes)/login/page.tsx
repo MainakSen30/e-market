@@ -30,16 +30,23 @@ const Login = () => {
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormdata) => {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+        `${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-seller`,
         data,
         { withCredentials: true },
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setServerError(null);
       toast.success("Login successful. Welcome back!");
-      router.push("/");
+      const seller = data?.seller;
+      if (!seller?.shop) {
+        router.push("/signup?step=2");
+      } else if (!seller?.stripeId) {
+        router.push("/signup?step=3");
+      } else {
+        router.push("/");
+      }
     },
     onError: (error: AxiosError) => {
       const errorMessage =
