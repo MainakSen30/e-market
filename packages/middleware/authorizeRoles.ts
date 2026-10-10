@@ -9,6 +9,7 @@ export const isSeller = (
   if(req.role !== "seller") {
     return next(new AuthError("Unauthorized!Seller only"));
   }
+  return next();
 }
 
 export const isUser = (
@@ -19,4 +20,5 @@ export const isUser = (
   if(req.role !== "user") {
     return next(new AuthError("Unauthorized!User only"));
   }
+  return next();
 }

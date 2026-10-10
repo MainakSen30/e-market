@@ -443,9 +443,21 @@ export const createShop = async (
       shopData.website = website;
     }
 
-    const shop = await prisma.shops.create({
-      data: shopData
+    // A seller can only ever have one shop (sellerId is unique), so re-submitting
+    // the shop setup should update the existing shop instead of crashing with a
+    // duplicate-key error.
+    const existingShop = await prisma.shops.findUnique({
+      where: { sellerId: sellerId },
     });
+
+    const shop = existingShop
+      ? await prisma.shops.update({
+          where: { id: existingShop.id },
+          data: shopData,
+        })
+      : await prisma.shops.create({
+          data: shopData,
+        });
 
     res.status(201).json({
       shop,

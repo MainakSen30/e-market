@@ -65,13 +65,22 @@ const CreateShop: React.FC<CreateShopProps> = ({
       setActiveStep(3);
     },
     onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { message?: string; error?: string };
       const errorMessage =
-        (error.response?.data as { message?: string })?.message ||
+        errorData?.message ||
+        errorData?.error ||
         "Failed to create shop profile. Please try again.";
       setServerError(errorMessage);
       toast.error(errorMessage);
     },
   });
+
+  const onFormError = (formErrors: any) => {
+    const firstError = Object.values(formErrors)[0] as { message?: string } | undefined;
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  };
 
   const onSubmit = async (data: CreateShopFormData) => {
     setServerError(null);
@@ -112,7 +121,7 @@ const CreateShop: React.FC<CreateShopProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-4" noValidate>
       {/* Shop Name */}
       <div className="space-y-1.5 text-left">
         <label
@@ -278,9 +287,12 @@ const CreateShop: React.FC<CreateShopProps> = ({
             }`}
             {...register("website", {
               required: false,
-              pattern: {
-                value: /^https?:\/\//,
-                message: "Please enter a valid URL starting with http:// or https://",
+              validate: (val) => {
+                if (!val || val.trim() === "") return true;
+                return (
+                  /^https?:\/\//.test(val) ||
+                  "Please enter a valid URL starting with http:// or https://"
+                );
               },
             })}
           />
