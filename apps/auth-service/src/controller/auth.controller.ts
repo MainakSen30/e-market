@@ -490,35 +490,78 @@ export const createStripeConnectLink = async (
       return next(new ValidationError("Seller not found"));
     }
 
-    //create stripe express account
-    const account = await stripe.accounts.create({
-      type: "express",
-      email: seller?.email,
-      country: "IN",
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true }
-      }
-    });
+    // Reuse the seller's existing Connect account so repeated clicks don't
+    // create duplicate accounts. Only create one the first time.
+    let stripeId = seller.stripeId;
 
-    await prisma.sellers.update({
-      where: { id: sellerId },
-      data: {
-        stripeId: account.id
-      }
-    });
+    if (!stripeId) {
+      // Stripe is enforcing Accounts v2 for new Connect integrations on this account.
+      const account: any = await (stripe as any).v2.core.accounts.create({
+        contact_email: seller.email,
+        identity: {
+          country: "US"
+        },
+        dashboard: "express",
+        configuration: {
+          merchant: {
+            capabilities: {
+              card_payments: {
+                requested: true
+              }
+            }
+          },
+          recipient: {
+            capabilities: {
+              stripe_balance: {
+                stripe_transfers: {
+                  requested: true
+                }
+              }
+            }
+          }
+        },
+        defaults: {
+          responsibilities: {
+            fees_collector: "application",
+            losses_collector: "application"
+          }
+        }
+      });
 
+      stripeId = account.id;
+
+      await prisma.sellers.update({
+        where: { id: sellerId },
+        data: {
+          stripeId
+        }
+      });
+    }
+
+    // Account links are single-use and expire, so always mint a fresh one.
+    // Account links still use the v1 API and accept v2 account IDs.
+    const sellerUiUrl = process.env.SELLER_UI_URL || "http://localhost:3000";
     const accountLink = await stripe.accountLinks.create({
-      account: account.id,
-      refresh_url: "http://localhost:3000/success",
-      return_url: "http://localhost:3000/success",
+      account: stripeId,
+      refresh_url: `${sellerUiUrl}/signup?step=3`,
+      return_url: `${sellerUiUrl}/`,
       type: "account_onboarding"
     });
 
     res.json({
-      url: accountLink.url
+      url: accountLink.url,
+      stripeId
     });
   } catch (error) {
+    // Surface Stripe's configuration errors (e.g. Connect not enabled) instead
+    // of hiding them behind a generic 500 so the UI can show them.
+    if ((error as any)?.type?.startsWith?.("Stripe") || (error as any) instanceof stripe.errors.StripeError) {
+      return next(new ValidationError((error as any).message));
+    }
+    if ((error as any)?.type === "invalid_request_error") {
+      return next(new ValidationError((error as any).message));
+    }
+
     return next(error);
   }
 }

@@ -261,7 +261,13 @@ const SignupContent = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Failed to connect Stripe. Please try again.");
+      const responseData = (error as AxiosError<{ message?: string; error?: string }>)
+        .response?.data;
+      toast.error(
+        responseData?.message ||
+          responseData?.error ||
+          "Failed to connect Stripe. Please try again.",
+      );
     } finally {
       setIsConnectingStripe(false);
     }
