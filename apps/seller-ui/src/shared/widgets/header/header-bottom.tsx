@@ -1,7 +1,7 @@
 "use client";
-import ProfileIcon from "apps/user-ui/src/assets/svgs/profile-icon";
-import { navItems } from "apps/user-ui/src/configs/constants";
-import useUser from "apps/user-ui/src/hooks/useUser";
+import ProfileIcon from "../../../assets/svgs/profile-icon";
+import { navItems } from "../../../configs/constants";
+import useUser from "../../../hooks/useUser";
 import { AlignLeft, ChevronDown, HeartIcon, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";

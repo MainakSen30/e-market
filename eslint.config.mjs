@@ -6,7 +6,7 @@ export default [
   ...nx.configs["flat/javascript"],
 
   {
-    ignores: ["**/dist"],
+    ignores: ["**/dist", "**/.next", "**/node_modules"],
   },
 
   {
