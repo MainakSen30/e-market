@@ -17,6 +17,7 @@
   "plugins": [
     {
       "plugin": "@nx/js/typescript",
+      "exclude": ["tempo/**/*"],
       "options": {
         "typecheck": {
           "targetName": "typecheck"
@@ -31,6 +32,7 @@
     },
     {
       "plugin": "@nx/eslint/plugin",
+      "exclude": ["tempo/**/*"],
       "options": {
         "targetName": "lint"
       }
@@ -44,6 +46,7 @@
     },
     {
       "plugin": "@nx/webpack/plugin",
+      "exclude": ["tempo/**/*"],
       "options": {
         "buildTargetName": "build",
         "serveTargetName": "serve",
@@ -54,6 +57,7 @@
     },
     {
       "plugin": "@nx/next/plugin",
+      "exclude": ["tempo/**/*"],
       "options": {
         "startTargetName": "start",
         "buildTargetName": "build",
