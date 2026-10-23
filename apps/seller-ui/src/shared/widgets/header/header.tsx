@@ -4,7 +4,7 @@ import React from "react";
 import { HeartIcon, Search, ShoppingBag, ShoppingBasket } from "lucide-react";
 import ProfileIcon from "../../../assets/svgs/profile-icon";
 import HeaderBottom from "./header-bottom";
-import useUser from "apps/user-ui/src/hooks/useUser";
+import useUser from "../../../hooks/useUser";
 
 const Header = () => {
   const { user, isLoading } = useUser();
