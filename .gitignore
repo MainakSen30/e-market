@@ -1,13 +1,10 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
 # compiled output
 dist
 tmp
 out-tsc
-
 # dependencies
 node_modules
-
 # IDEs and editors
 /.idea
 .project
@@ -16,11 +13,9 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
-
 # IDE - VSCode
 .vscode/*
 !.vscode/extensions.json
-
 # misc
 /.sass-cache
 /connect.lock
@@ -30,27 +25,23 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-
 # System Files
 .DS_Store
 Thumbs.db
-
 .nx/cache
 .nx/workspace-data
-
 test-output
-
 /generated/prisma
-
 # environment
 .env
-
 # AI tooling
 .claude/
 .agents/
 .windsurf/
 skills-lock.json
-
 # Next.js
 .next
 out
+tempo/.tempo/
+tempo/node_modules/
+tempo/dist/
