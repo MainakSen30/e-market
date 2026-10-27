@@ -445,7 +445,7 @@ export const createShop = async (
     const openingHours = req.body.openingHours || req.body.opening_hours;
     const category = req.body.category;
     const website = req.body.website;
-    const sellerId = req.body.sellerId || req.seller?.id;
+    const sellerId = req.body.sellerId || (req as any).seller?.id;
 
     //check if any data is missing
     if(!shopName || !shopAddress || !category || !sellerId || !openingHours || !shopBio) {
@@ -550,7 +550,7 @@ export const createStripeConnectLink = async (
         }
       });
 
-      stripeId = account.id;
+      stripeId = account.id as string;
 
       await prisma.sellers.update({
         where: { id: sellerId },
