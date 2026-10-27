@@ -172,7 +172,10 @@ export const refreshTokenUser = async (
   next: NextFunction,
 ) => {
   try {
-    const refreshToken = req.cookies.refresh_token;
+    // Read the refresh cookie under the names actually issued at login
+    // (loginUser -> "user-refresh-token", loginSeller -> "seller-refresh-token")
+    const refreshToken =
+      req.cookies["user-refresh-token"] || req.cookies["seller-refresh-token"];
 
     if (!refreshToken) {
       return next(new AuthError("Unauthorized! No refresh token!"));
@@ -190,31 +193,50 @@ export const refreshTokenUser = async (
       return next(new JsonWebTokenError("Forbidden! Invalid refresh token!"));
     }
 
-    //ensure whether the seller or user account exists in the database
-    //let account;
-    //if(decoded.role === "user") {
+    // Re-issue the access token under the cookie name isAuthenticated reads,
+    // and branch on role so sellers can refresh too.
+    if (decoded.role === "seller") {
+      const seller = await prisma.sellers.findUnique({
+        where: { id: decoded.id },
+      });
+
+      if (!seller) {
+        return next(new AuthError("Forbidden! Invalid refresh token!"));
+      }
+
+      const accessTokenAuth = jwt.sign(
+        { id: seller.id, role: "seller" },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: "15m" },
+      );
+      setCookie(res, "seller-access-token", accessTokenAuth);
+
+      return res.status(200).json({ success: true });
+    }
+
     const user = await prisma.users.findUnique({
-      where: {
-        id: decoded.id,
-      },
+      where: { id: decoded.id },
     });
 
     if (!user) {
       return next(new AuthError("Forbidden! Invalid refresh token!"));
     }
 
-    // sign a new access token
     const accessTokenAuth = jwt.sign(
       { id: user.id, role: "user" },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: "15m" },
     );
-    setCookie(res, "access_token", accessTokenAuth);
+    setCookie(res, "user-access-token", accessTokenAuth);
 
-    res.status(201).json({
-      success: true,
-    });
+    // 200, not 201 — a refresh is not a resource creation
+    return res.status(200).json({ success: true });
   } catch (error) {
+    // Invalid/expired refresh tokens are an auth failure, not a server fault
+    if (error instanceof JsonWebTokenError) {
+      return next(new AuthError("Forbidden! Invalid or expired refresh token!"));
+    }
+
     return next(error);
   }
 };
